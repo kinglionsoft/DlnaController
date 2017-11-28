@@ -1,31 +1,19 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reactive.Linq;
-using SV.UPnPLite;
-using SV.UPnPLite.Extensions;
+using System.Threading.Tasks;
 using SV.UPnPLite.Protocols.DLNA;
 using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory;
 using SV.UPnPLite.Protocols.UPnP;
 
-namespace TestDemo
+namespace DlnaController.Web
 {
-    class Program
+    public class UPnpTester
     {
-
-        static void Main(string[] args)
-        {
-            ReactiveTester.Run();
-            Console.Read();
-        }
-
         private static MediaServer _mini;
 
         private static MediaRenderer _renderer;
-
-        static void Test2()
+       public  static void Test2()
         {
             //var client = new HttpUClient();
             //client.OnResponse += Client_OnResponse;
@@ -53,8 +41,8 @@ namespace TestDemo
 
             //  Receiving notifications about new devices of specific type added to the network
             var newMediaServers = from activityInfo in devicesDiscovery.DevicesActivity
-                where activityInfo.Activity == DeviceActivity.Available && activityInfo.Device.DeviceType == "urn:schemas-upnp-org:device:MediaServer"
-                select activityInfo.Device;
+                                  where activityInfo.Activity == DeviceActivity.Available && activityInfo.Device.DeviceType == "urn:schemas-upnp-org:device:MediaServer"
+                                  select activityInfo.Device;
 
             newMediaServers.Subscribe(s =>
             {
@@ -86,7 +74,7 @@ namespace TestDemo
                     //var containerToBrowse = rootContainers.First(x=>x.Title=="Video");
                     //var childContainerObjects = await e.Device.BrowseAsync(containerToBrowse);
 
-                   // var videos = await e.Device.SearchAsync<VideoItem>();
+                    // var videos = await e.Device.SearchAsync<VideoItem>();
 
                     _mini = e.Device;
                 }
@@ -101,51 +89,20 @@ namespace TestDemo
                     _renderer = e.Device;
                 }
             });
-            
-            Console.Read();
-            Play();
         }
 
-        static void Play()
+        public static async Task Play()
         {
             try
             {
-                var videos = _mini.SearchAsync<VideoItem>().GetAwaiter().GetResult().First();
-                _renderer.OpenAsync(videos).GetAwaiter().GetResult();
-                _renderer.PlayAsync().GetAwaiter().GetResult(); ;
+                var videos = await _mini.SearchAsync<VideoItem>();
+                await _renderer.OpenAsync(videos.First());
+                await _renderer.PlayAsync(); ;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
         }
-
-
-        static void Test()
-        {
-            var url = "http://10.0.201.61:8200/ctl/ContentDir";
-            var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
-<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"" s:encodingStyle=""http://schemas.xmlsoap.org/soap/encoding/"">
-  <s:Body>
-    <u:Search xmlns:u=""urn:schemas-upnp-org:service:ContentDirectory:1"">
-      <ContainerID>0</ContainerID>
-      <SearchCriteria>upnp:class derivedfrom ""object.item.videoItem""</SearchCriteria>
-      <Filter>*</Filter>
-      <StartingIndex>0</StartingIndex>
-      <RequestedCount>0</RequestedCount>
-      <SortCriteria></SortCriteria>
-    </u:Search>
-  </s:Body>
-</s:Envelope>
-";
-
-            var headers = new Dictionary<string, string>()
-            {
-                {"SOAPACTION", "urn:schemas-upnp-org:service:ContentDirectory:1#Search"}
-            };
-           var result =  HttpClientHelper.PostXmlAsync(url, xml, headers).Result;
-
-        }
-
     }
 }

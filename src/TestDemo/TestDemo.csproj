@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HttpU\HttpU.csproj" />
-    <ProjectReference Include="..\UPnPAV_RendererStack\UPnPAV_RendererStack.csproj" />
+    <ProjectReference Include="..\SV.UPnPLite.Core\SV.UPnPLite.Core.csproj" />
   </ItemGroup>
 
 </Project>
