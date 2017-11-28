@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -9,27 +11,19 @@
     /// </summary>
     public class MediaRenderersDiscovery : UPnPDevicesDiscovery<MediaRenderer>, IMediaRenderersDiscovery
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaRenderersDiscovery" /> class.
-		/// </summary>
-		public MediaRenderersDiscovery()
-			: base("urn:schemas-upnp-org:device:MediaRenderer:1")
-		{
-		}
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaRenderersDiscovery" /> class.
-		/// </summary>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public MediaRenderersDiscovery(ILogManager logManager)
-			: base("urn:schemas-upnp-org:device:MediaRenderer:1", logManager)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MediaRenderersDiscovery" /> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="logManager"/> is <c>null</c>.
+        /// </exception>
+        public MediaRenderersDiscovery(ILoggerFactory loggerFactory)
+			: base("urn:schemas-upnp-org:device:MediaRenderer:1", loggerFactory)
 		{
 		}
 
@@ -64,11 +58,11 @@
 
 			if (missingServices.Any() == false)
 			{
-				return new MediaRenderer(udn, avTransportService, this.logManager);
+				return new MediaRenderer(udn, avTransportService, this.loggerFactory);
 			}
 			else
 			{
-				this.logger.Instance().Warning(
+				this.logger.LogWarning(
 					"The media renderer has been ignored as it doesn't implement some mandatory services",
 					"MissingServices".As(string.Join(",", missingServices)),
 					"DeviceName".As(name),
@@ -99,7 +93,7 @@
 
 			if (serviceType.StartsWith("urn:schemas-upnp-org:service:AVTransport", StringComparison.OrdinalIgnoreCase))
 			{
-				service = new AvTransportService(serviceType, controlUri, eventsUri, this.logManager);
+				service = new AvTransportService(serviceType, controlUri, eventsUri, this.loggerFactory);
 			}
 
 			return service;

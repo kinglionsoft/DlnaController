@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     /// <summary>
     ///     Represents a piece of content that, when rendered, generates some audio2. It is atomic in the sense that it does not contain other objects in the ContentDirectory. 
@@ -45,18 +47,18 @@
 		/// </summary>
 		public string Rights { get; internal set; }
 
-		#endregion
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="AudioItem"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public AudioItem(ILogManager logManager = null)
-			: base(logManager)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="AudioItem"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        public AudioItem(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

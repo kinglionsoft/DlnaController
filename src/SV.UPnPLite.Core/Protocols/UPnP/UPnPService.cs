@@ -1,8 +1,10 @@
 ﻿
 using System.Net.Http;
+using Microsoft.Extensions.Logging;
 
 namespace SV.UPnPLite.Core
 {
+    using SV.UPnPLite.Core.Http;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -57,51 +59,20 @@ namespace SV.UPnPLite.Core
         /// <param name="eventsUri">
         ///     An URL for subscrinbing to service's events.
         /// </param>
+        /// <param name="logManager">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="serviceType"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
         ///     <paramref name="controlUri"/> is <c>null</c> -OR-
         ///     <paramref name="eventsUri"/> is <c>null</c>.
         /// </exception>
-        public UPnPService(string serviceType, Uri controlUri, Uri eventsUri)
+        public UPnPService(string serviceType, Uri controlUri, Uri eventsUri, ILoggerFactory loggerFactory)
         {
             this.ServiceType = serviceType;
             this.controlUri = controlUri;
             this.eventsUri = eventsUri;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="UPnPService" /> class.
-        /// </summary>
-        /// <param name="serviceType">
-        ///     A type of the service.
-        /// </param>
-        /// <param name="controlUri">
-        ///     An URL for sending commands to the service.
-        /// </param>
-        /// <param name="eventsUri">
-        ///     An URL for subscrinbing to service's events.
-        /// </param>
-        /// <param name="logManager">
-        ///     The <see cref="ILogManager"/> to use for logging the debug information.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="serviceType"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-        ///     <paramref name="controlUri"/> is <c>null</c> -OR-
-        ///     <paramref name="eventsUri"/> is <c>null</c>.
-        /// </exception>
-        public UPnPService(string serviceType, Uri controlUri, Uri eventsUri, ILogManager logManager)
-            : this(serviceType, controlUri, eventsUri)
-        {
-            this.LogManager = logManager;
-
-            if (logManager != null)
-            {
-                this.logger = logManager.GetLogger(this.GetType());
-            }
-            else
-            {
-                this.logger = logger.Instance();
-            }
+            this.logger = loggerFactory.CreateLogger(this.GetType().Name);
         }
 
         #endregion
@@ -112,9 +83,7 @@ namespace SV.UPnPLite.Core
         ///     Gets a type of the service.
         /// </summary>
         public string ServiceType { get; internal set; }
-
-        protected ILogManager LogManager { get; private set; }
-
+        
         #endregion
 
         #region Methods
@@ -130,9 +99,6 @@ namespace SV.UPnPLite.Core
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///     An <see cref="action"/> is <c>null</c> or empty.
-        /// </exception>
-        /// <exception cref="WebException">
-        ///     An error occurred when sending request to service.
         /// </exception>
         /// <exception cref="FormatException">
         ///     Received result is in a bad format.
@@ -160,9 +126,6 @@ namespace SV.UPnPLite.Core
         /// <exception cref="ArgumentNullException">
         ///     An <see cref="action"/> is <c>null</c> or empty.
         /// </exception>
-        /// <exception cref="WebException">
-        ///     An error occurred when sending request to service.
-        /// </exception>
         /// <exception cref="FormatException">
         ///     Received result is in a bad format.
         /// </exception>
@@ -185,7 +148,7 @@ namespace SV.UPnPLite.Core
         {
             try
             {
-                logger.Instance().Trace("Request has been sent: {0}?{1}".F(this.controlUri, requestInfo.Action),
+                logger.LogTrace("Request has been sent: {0}?{1}".F(this.controlUri, requestInfo.Action),
                     requestInfo.Arguments?.ToArray());
 
                 var xml = this.CreateActionRequest(requestInfo.Action, requestInfo.Arguments);
@@ -202,11 +165,6 @@ namespace SV.UPnPLite.Core
                     return result;
                 }
 
-            }
-            catch (HttpRequestException ex)
-            {
-               
-                throw ex;
             }
             catch (XmlException ex)
             {
@@ -319,17 +277,17 @@ namespace SV.UPnPLite.Core
                     }
                     else
                     {
-                        this.logger.Instance().Warning("Can't parse '{0}' response with error. The 'errorCode' element is missing".F(action));
+                        this.logger.LogWarning("Can't parse '{0}' response with error. The 'errorCode' element is missing".F(action));
                     }
                 }
                 else
                 {
-                    this.logger.Instance().Warning("Can't parse '{0}' response with error. The 'UPnPError' element is missing".F(action));
+                    this.logger.LogWarning("Can't parse '{0}' response with error. The 'UPnPError' element is missing".F(action));
                 }
             }
             catch (XmlException ex)
             {
-                this.logger.Instance().Warning(ex, "An error occurred when parsing '{0}' response with error".F(action));
+                this.logger.LogWarning(ex, "An error occurred when parsing '{0}' response with error".F(action));
             }
 
             return exception;

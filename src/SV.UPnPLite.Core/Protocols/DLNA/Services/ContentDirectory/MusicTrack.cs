@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
 
@@ -43,8 +45,8 @@
 
 		#region Constructors
 
-		public MusicTrack(ILogManager logManager)
-			: base(logManager)
+		public MusicTrack(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

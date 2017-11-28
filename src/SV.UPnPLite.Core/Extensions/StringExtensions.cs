@@ -41,5 +41,16 @@ namespace SV.UPnPLite.Core
 	    {
 	        return StringComparer.OrdinalIgnoreCase.Compare(st, compareTo) == 0;
 	    }
+
+        /// <summary>
+        /// Combines key and value
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+	    public static string As(this string key, object value)
+	    {
+	        return $"{key}={value}";
+	    }
     }
 }

@@ -1,17 +1,19 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     public class MusicArtistContainer : PersonContainer
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="MusicArtistContainer"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public MusicArtistContainer(ILogManager logManager)
-			: base(logManager)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="MusicArtistContainer"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        public MusicArtistContainer(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

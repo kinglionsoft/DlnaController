@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     public class AlbumContainer : MediaContainer
@@ -11,8 +13,8 @@ namespace SV.UPnPLite.Core
 		/// <param name="logManager">
 		///		The log manager to use for logging.
 		///	</param>
-		public AlbumContainer(ILogManager logManager = null)
-			: base(logManager)
+		public AlbumContainer(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     using System;
@@ -22,23 +24,20 @@ namespace SV.UPnPLite.Core
 
 		private ILogger logger;
 
-		#endregion
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="MediaResource"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public MediaResource(ILogManager logManager = null)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="MediaResource"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        public MediaResource(ILoggerFactory loggerFactory )
 		{
-			if (logManager != null)
-			{
-				this.logger = logManager.GetLogger<MediaResource>();
-			}
-		}
+		    this.logger = loggerFactory.CreateLogger(nameof(MediaResource));
+        }
 
 		#endregion
 
@@ -134,11 +133,11 @@ namespace SV.UPnPLite.Core
 					}
 					catch (FormatException ex)
 					{
-						this.logger.Instance().Warning(ex, "Unable to parse value '{0}' for resource key '{1}'.".F(reader.Value, reader.LocalName), "ResourceXML".As(resourceXml));
+						this.logger.LogWarning(ex, "Unable to parse value '{0}' for resource key '{1}'.".F(reader.Value, reader.LocalName), "ResourceXML".As(resourceXml));
 					}
 					catch (OverflowException ex)
 					{
-						this.logger.Instance().Warning(ex, "Unable to parse value '{0}' for resource key '{1}'.".F(reader.Value, reader.LocalName), "ResourceXML".As(resourceXml));
+						this.logger.LogWarning(ex, "Unable to parse value '{0}' for resource key '{1}'.".F(reader.Value, reader.LocalName), "ResourceXML".As(resourceXml));
 					}
 				}
 

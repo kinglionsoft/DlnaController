@@ -8,7 +8,7 @@ namespace SV.UPnPLite.Core
 	/// <summary>
 	///     The base class for all <see cref="XName"/> comparers.
 	/// </summary>
-	internal abstract class XNameComparer : IEqualityComparer<XName>
+	public abstract class XNameComparer : IEqualityComparer<XName>
 	{
 		#region Properties
 		/// <summary>

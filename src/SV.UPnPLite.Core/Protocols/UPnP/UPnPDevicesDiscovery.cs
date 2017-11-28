@@ -1,6 +1,8 @@
 ﻿
 using System.Net.Http;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using SV.UPnPLite.Core.Http;
 
 namespace SV.UPnPLite.Core
 {
@@ -22,7 +24,7 @@ namespace SV.UPnPLite.Core
 
         #region Fields
 
-        protected readonly ILogManager logManager;
+        protected readonly ILoggerFactory loggerFactory;
         protected readonly ILogger logger;
         private readonly ISSDPServer ssdpServer;
         private readonly string targetDeviceType;
@@ -70,29 +72,15 @@ namespace SV.UPnPLite.Core
         /// <param name="targetDevices">
         ///     The type of the devices to discover.
         /// </param>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="targetDevices"/> is <c>null</c> or <see cref="string.Empty"/>.
-        /// </exception>
-        protected UPnPDevicesDiscovery(string targetDevices)
-            : this(targetDevices, SSDPServer.GetInstance())
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="UPnPDevicesDiscovery{TDevice}"/> class.
-        /// </summary>
-        /// <param name="targetDevices">
-        ///     The type of the devices to discover.
-        /// </param>
-        /// <param name="logManager">
+        /// <param name="loggerFactory">
         ///     The <see cref="ILogManager"/> to use for logging the debug information.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="targetDevices"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
         ///     <paramref name="logManager"/> is <c>null</c>.
         /// </exception>
-        protected UPnPDevicesDiscovery(string targetDevices, ILogManager logManager)
-            : this(targetDevices, SSDPServer.GetInstance(logManager), logManager)
+        protected UPnPDevicesDiscovery(string targetDevices, ILoggerFactory loggerFactory)
+            : this(targetDevices, SSDPServer.GetInstance(loggerFactory), loggerFactory)
         {
         }
 
@@ -105,7 +93,7 @@ namespace SV.UPnPLite.Core
         /// <param name="ssdpServer">
         ///     The implementation of the SSDP protocol to use for discovering the UPnP devices.
         /// </param>
-        /// <param name="logManager">
+        /// <param name="loggerFactory">
         ///     The <see cref="ILogManager"/> to use for logging the debug information.
         /// </param>
         /// <exception cref="ArgumentNullException">
@@ -113,7 +101,7 @@ namespace SV.UPnPLite.Core
         ///     <paramref name="ssdpServer"/> is <c>null</c> -OR-
         ///     <paramref name="logManager"/> is <c>null</c>.
         /// </exception>
-        internal UPnPDevicesDiscovery(string targetDeviceType, ISSDPServer ssdpServer, ILogManager logManager = null)
+        internal UPnPDevicesDiscovery(string targetDeviceType, ISSDPServer ssdpServer, ILoggerFactory loggerFactory)
         {
             targetDeviceType.EnsureNotNull("targetDevices");
             ssdpServer.EnsureNotNull("ssdpServer");
@@ -123,13 +111,10 @@ namespace SV.UPnPLite.Core
 
             this.targetDeviceType = targetDeviceType;
             this.ssdpServer = ssdpServer;
-            this.logManager = logManager;
+            this.loggerFactory = loggerFactory;
 
-            if (this.logManager != null)
-            {
-                this.logger = this.logManager.GetLogger(this.GetType());
-                this.logger.Instance().Info("Started listening for upnp devices", "TargetDevices".As(targetDeviceType));
-            }
+            this.logger = loggerFactory.CreateLogger(this.GetType());
+            this.logger.LogInformation("Started listening for upnp devices", "TargetDevices".As(targetDeviceType));
 
             var targetDevicesNotifications = from notification in this.ssdpServer.NotifyMessages
                                              where string.Compare(notification.NotificationType, targetDeviceType, StringComparison.OrdinalIgnoreCase) == 0
@@ -235,7 +220,7 @@ namespace SV.UPnPLite.Core
                                     device.LastCheckTime = DateTime.UtcNow;
 
                                     this.devices.Add(device);
-                                    this.logger.Instance().Info("The device has been added", "DeviceName".As(device.FriendlyName), "DeviceUDN".As(device.UDN));
+                                    this.logger.LogInformation("The device has been added", "DeviceName".As(device.FriendlyName), "DeviceUDN".As(device.UDN));
                                     this.devicesActivity.OnNext(new DeviceActivityEventArgs<TDevice> { Activity = DeviceActivity.Available, Device = device });
 
                                     this.ScheduleNextCheckForExpiredDevices();
@@ -246,7 +231,7 @@ namespace SV.UPnPLite.Core
                 }
                 catch (HttpRequestException ex)
                 {
-                    this.logger.Instance().Warning(ex, "Failed to load description for device with '{0}'".F(notifyMessage));
+                    this.logger.LogWarning(ex, "Failed to load description for device with '{0}'".F(notifyMessage));
                 }
             }
         }
@@ -264,7 +249,7 @@ namespace SV.UPnPLite.Core
 
                     this.ScheduleNextCheckForExpiredDevices();
 
-                    this.logger.Instance().Info("The device lifetime has been updated", "DeviceName".As(device.FriendlyName), "DeviceUDN".As(device.UDN), "MaxAge".As(notifyMessage.MaxAge));
+                    this.logger.LogInformation("The device lifetime has been updated", "DeviceName".As(device.FriendlyName), "DeviceUDN".As(device.UDN), "MaxAge".As(notifyMessage.MaxAge));
                 }
             }
         }
@@ -278,7 +263,7 @@ namespace SV.UPnPLite.Core
                 if (device != null)
                 {
                     this.devices.Remove(device);
-                    this.logger.Instance().Info("The device has been removed", "DeviceName".As(device.FriendlyName), "DeviceUDN".As(device.UDN));
+                    this.logger.LogInformation("The device has been removed", "DeviceName".As(device.FriendlyName), "DeviceUDN".As(device.UDN));
 
                     this.devicesActivity.OnNext(new DeviceActivityEventArgs<TDevice> { Activity = DeviceActivity.Gone, Device = device });
                     this.ScheduleNextCheckForExpiredDevices();
@@ -292,7 +277,7 @@ namespace SV.UPnPLite.Core
             {
                 if (scanProcess == null)
                 {
-                    this.logger.Instance().Info("Searching for new devices...");
+                    this.logger.LogInformation("Searching for new devices...");
 
                     scanProcess = this.ssdpServer.Search(this.targetDeviceType, SearchTimeout).Subscribe(
                         response =>
@@ -336,7 +321,7 @@ namespace SV.UPnPLite.Core
 
                     expiredDevicesChecker = Observable.Timer(nextCheckTime - DateTime.UtcNow).Subscribe(_ =>
                     {
-                        this.logger.Instance().Debug("The lifetime has been expired for one of the devices");
+                        this.logger.LogDebug("The lifetime has been expired for one of the devices");
                         this.ScanAsync();
                     });
                 }
@@ -379,7 +364,7 @@ namespace SV.UPnPLite.Core
                 {
                     version.Major = 1;
 
-                    this.logger.Instance().Warning("Can't parse major part of the device's version", "DeviceType".As(deviceTypeWithVersion));
+                    this.logger.LogWarning("Can't parse major part of the device's version", "DeviceType".As(deviceTypeWithVersion));
                 }
 
                 if (majorMinorSplit.Length > 1 && int.TryParse(majorMinorSplit[1], out value))
@@ -389,7 +374,7 @@ namespace SV.UPnPLite.Core
             }
             else
             {
-                this.logger.Instance().Warning("The version is missing in device's type", "DeviceType".As(deviceTypeWithVersion));
+                this.logger.LogWarning("The version is missing in device's type", "DeviceType".As(deviceTypeWithVersion));
             }
 
             return version;
@@ -447,7 +432,7 @@ namespace SV.UPnPLite.Core
                     }
                     else
                     {
-                        this.logger.Instance().Warning(
+                        this.logger.LogWarning(
                             "The device has been ignored as some mandatory fields in its description are missing",
                             "DeviceHost".As(host),
                             "DeviceName".As(deviceName.ValueOrDefault()),
@@ -457,12 +442,12 @@ namespace SV.UPnPLite.Core
                 }
                 else
                 {
-                    this.logger.Instance().Warning("The device has been ignored as its description is missing", "DeviceHost".As(host));
+                    this.logger.LogWarning("The device has been ignored as its description is missing", "DeviceHost".As(host));
                 }
             }
             else
             {
-                this.logger.Instance().Warning("The device has been ignored as its description is missing", "DeviceHost".As(host));
+                this.logger.LogWarning("The device has been ignored as its description is missing", "DeviceHost".As(host));
             }
 
             return device;
@@ -496,7 +481,7 @@ namespace SV.UPnPLite.Core
                     }
                     else
                     {
-                        this.logger.Instance().Warning(
+                        this.logger.LogWarning(
                             "The device service has been ignored as some mandatory fields are missing in its description",
                             "DeviceHost".As(host),
                             "DeviceName".As(deviceName),

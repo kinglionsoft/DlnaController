@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -12,45 +14,29 @@
 
 		protected readonly ILogger logger;
 
-		#endregion
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="UPnPDevice"/> class.
-		/// </summary>
-		/// <param name="udn">
-		///     A universally-unique identifier for the device.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="udn"/> is <c>nukk</c> or <see cref="string.Empty"/>.
-		/// </exception>
-		protected UPnPDevice(string udn)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UPnPDevice"/> class.
+        /// </summary>
+        /// <param name="udn">
+        ///     A universally-unique identifier for the device.
+        /// </param>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="udn"/> is <c>nukk</c> or <see cref="string.Empty"/>.
+        /// </exception>
+        protected UPnPDevice(string udn, ILoggerFactory loggerFactory)
 		{
-			udn.EnsureNotNull("udn");
+		    udn.EnsureNotNull("udn");
 
-			this.UDN = udn;
-		}
+		    this.UDN = udn;
+		    this.logger = loggerFactory.CreateLogger(this.GetType().Name);
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="UPnPDevice"/> class.
-		/// </summary>
-		/// <param name="udn">
-		///     A universally-unique identifier for the device.
-		/// </param>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="udn"/> is <c>nukk</c> or <see cref="string.Empty"/>.
-		/// </exception>
-		protected UPnPDevice(string udn, ILogManager logManager)
-			: this(udn)
-		{
-			if (logManager != null)
-			{
-				this.logger = logManager.GetLogger(this.GetType());
-			}
 		}
 
 		#endregion
@@ -105,5 +91,10 @@
 		}
 
 		#endregion
+
+	    public override string ToString()
+	    {
+	        return $"UDN={UDN}, Name={FriendlyName}, Address={Address}";
+	    }
 	}
 }

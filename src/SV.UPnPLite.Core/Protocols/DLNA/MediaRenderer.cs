@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     using System;
@@ -38,48 +40,26 @@ namespace SV.UPnPLite.Core
 
 		#region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaRenderer"/> class.
-		/// </summary>
-		/// <param name="udn">
-		///     A universally-unique identifier for the device.
-		/// </param>
-		/// <param name="avTransportService">
-		///     A <see cref="IAvTransportService"/> to use for controlling the transport of media streams.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="udn"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="avTransportService"/> is <c>null</c>.
-		/// </exception>
-		public MediaRenderer(string udn, IAvTransportService avTransportService)
-			: base(udn)
-		{
-			avTransportService.EnsureNotNull("avTransportService");
-
-			this.avTransportService = avTransportService;
-
-			this.Initialize();
-		}
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaRenderer"/> class.
-		/// </summary>
-		/// <param name="udn">
-		///     A universally-unique identifier for the device.
-		/// </param>
-		/// <param name="avTransportService">
-		///     A <see cref="IAvTransportService"/> to use for controlling the transport of media streams.
-		/// </param>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="udn"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="avTransportService"/> is <c>null</c> -OR-
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public MediaRenderer(string udn, IAvTransportService avTransportService, ILogManager logManager)
-			: base(udn, logManager)
+		
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MediaRenderer"/> class.
+        /// </summary>
+        /// <param name="udn">
+        ///     A universally-unique identifier for the device.
+        /// </param>
+        /// <param name="avTransportService">
+        ///     A <see cref="IAvTransportService"/> to use for controlling the transport of media streams.
+        /// </param>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="udn"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
+        ///     <paramref name="avTransportService"/> is <c>null</c> -OR-
+        ///     <paramref name="logManager"/> is <c>null</c>.
+        /// </exception>
+        public MediaRenderer(string udn, IAvTransportService avTransportService, ILoggerFactory loggerFactory)
+			: base(udn, loggerFactory)
 		{
 			avTransportService.EnsureNotNull("avTransportService");
 
@@ -276,7 +256,7 @@ namespace SV.UPnPLite.Core
 		/// <exception cref="MediaRendererException">
 		///     An unexpected error occurred when executing request on device.
 		/// </exception>
-		public async Task<TimeSpan> GetCurrentPosition()
+		public async Task<TimeSpan> GetCurrentPositionAsync()
 		{
 			try
 			{
@@ -306,7 +286,7 @@ namespace SV.UPnPLite.Core
 		/// <exception cref="MediaRendererException">
 		///     An unexpected error occurred when executing request on device.
 		/// </exception>
-		public async Task<MediaRendererState> GetCurrentState()
+		public async Task<MediaRendererState> GetCurrentStateAsyncTask()
 		{
 			try
 			{
@@ -362,7 +342,7 @@ namespace SV.UPnPLite.Core
 			{
 				result = MediaRendererState.Stopped;
 
-				this.logger.Instance().Warning("An unexpected transport state received", "Renderer".As(this.FriendlyName), "State".As(transportState));
+				this.logger.LogWarning("An unexpected transport state received", "Renderer".As(this.FriendlyName), "State".As(transportState));
 			}
 
 			return result;
@@ -388,15 +368,15 @@ namespace SV.UPnPLite.Core
 						}
 						catch (WebException ex)
 						{
-							this.logger.Instance().Warning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
+							this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
 						}
 						catch (FormatException ex)
 						{
-							this.logger.Instance().Warning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
+							this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
 						}
 						catch (UPnPServiceException ex)
 						{
-							this.logger.Instance().Warning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
+							this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
 						}
 					});
 
@@ -421,15 +401,15 @@ namespace SV.UPnPLite.Core
 						}
 						catch (WebException ex)
 						{
-							this.logger.Instance().Warning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
+							this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
 						}
 						catch (FormatException ex)
 						{
-							this.logger.Instance().Warning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
+							this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
 						}
 						catch (UPnPServiceException ex)
 						{
-							this.logger.Instance().Warning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
+							this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
 						}
 					});
 

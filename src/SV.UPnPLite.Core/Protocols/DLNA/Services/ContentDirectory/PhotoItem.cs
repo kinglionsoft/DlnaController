@@ -1,18 +1,20 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     public class PhotoItem : ImageItem
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="PhotoItem"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public PhotoItem(ILogManager logManager = null)
-			: base(logManager)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="PhotoItem"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        public PhotoItem(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

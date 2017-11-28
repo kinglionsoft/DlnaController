@@ -14,7 +14,6 @@ namespace DlnaController.Web
     {
         public static void Main(string[] args)
         {
-            UPnpTester.Test2();
             BuildWebHost(args).Run();
         }
 

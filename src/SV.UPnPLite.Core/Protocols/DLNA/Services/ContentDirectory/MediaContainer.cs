@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     /// <summary>
     ///     Defines a media object which contains other media objects.
@@ -43,8 +45,8 @@
 		/// <param name="logManager">
 		///		The log manager to use for logging.
 		///	</param>
-		public MediaContainer(ILogManager logManager)
-			: base(logManager)
+		public MediaContainer(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

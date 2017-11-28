@@ -23,6 +23,10 @@ namespace DlnaController.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
+
+            services.AddUPnPManager();
+
             services.AddMvc();
         }
 
@@ -34,7 +38,12 @@ namespace DlnaController.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseUPnPManager();
+
             app.UseMvc();
+
+
+           // UPnpTester.Test2(app.ApplicationServices.GetService<ILoggerFactory>());
         }
     }
 }

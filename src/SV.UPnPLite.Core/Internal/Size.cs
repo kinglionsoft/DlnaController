@@ -4,7 +4,7 @@ namespace SV.UPnPLite.Core
 	/// <summary>
 	///     Stores an ordered pair of integers, which specify a <see cref="Size.Height"/> and <see cref="Size.Width"/>.
 	/// </summary>
-	internal struct Size
+	public struct Size
 	{
 		/// <summary>
 		///     Initializes a new instance of the <see cref="Size"/> structure from the specified dimensions.

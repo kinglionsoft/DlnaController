@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -9,27 +11,19 @@
     /// </summary>
     public class MediaServersDiscovery : UPnPDevicesDiscovery<MediaServer>, IMediaServersDiscovery
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaServersDiscovery" /> class.
-		/// </summary>
-		public MediaServersDiscovery()
-			: base("urn:schemas-upnp-org:device:MediaServer:1")
-		{
-		}
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaServersDiscovery" /> class.
-		/// </summary>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public MediaServersDiscovery(ILogManager logManager)
-			: base("urn:schemas-upnp-org:device:MediaServer:1", logManager)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MediaServersDiscovery" /> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="loggerFactory"/> is <c>null</c>.
+        /// </exception>
+        public MediaServersDiscovery(ILoggerFactory loggerFactory)
+			: base("urn:schemas-upnp-org:device:MediaServer:1", loggerFactory)
 		{
 		}
 
@@ -62,20 +56,17 @@
 				missingServices.Add(typeof(IContentDirectoryService).Name);
 			}
 
-			if (missingServices.Any() == false)
+			if (!missingServices.Any())
 			{
-				return new MediaServer(udn, contentDirectoryService, this.logManager);
+				return new MediaServer(udn, contentDirectoryService, this.loggerFactory);
 			}
-			else
-			{
-				this.logger.Instance().Warning(
-					"The media server has been ignored as it doesn't implement some mandatory services",
-					"MissingServices".As(string.Join(",", missingServices)),
-					"DeviceName".As(name),
-					"DeviceUDN".As(udn));
+		    this.logger.LogWarning(
+		        "The media server has been ignored as it doesn't implement some mandatory services",
+		        "MissingServices".As(string.Join(",", missingServices)),
+		        "DeviceName".As(name),
+		        "DeviceUDN".As(udn));
 
-				return null;
-			}
+		    return null;
 		}
 
 		/// <summary>
@@ -99,7 +90,7 @@
 
 			if (serviceType.StartsWith("urn:schemas-upnp-org:service:ContentDirectory", StringComparison.OrdinalIgnoreCase))
 			{
-				service = new ContentDirectoryService(serviceType, controlUri, eventsUri, this.logManager);
+				service = new ContentDirectoryService(serviceType, controlUri, eventsUri, this.loggerFactory);
 			}
 
 			return service;

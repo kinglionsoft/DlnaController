@@ -1,4 +1,7 @@
 ﻿
+using System;
+using System.Net;
+
 namespace SV.UPnPLite.Core
 {
     using System.Threading.Tasks;

@@ -1,96 +1,98 @@
-﻿namespace SV.UPnPLite.Core
-
-    using System;
+﻿
+using System;
 using System.Collections.Generic;
 
-/// <summary>
-///     The base class for all SSDP messages.
-/// </summary>
-internal class SSDPMessage
-	{
-		public int MaxAge { get; set; }
+namespace SV.UPnPLite.Core
+{
 
-		public string Location { get; set; }
+    /// <summary>
+    ///     The base class for all SSDP messages.
+    /// </summary>
+    internal class SSDPMessage
+    {
+        public int MaxAge { get; set; }
 
-		public string Server { get; set; }
+        public string Location { get; set; }
 
-		public int SearchPort { get; set; }
+        public string Server { get; set; }
 
-		public string USN { get; set; }
+        public int SearchPort { get; set; }
 
-		public int BootId { get; set; }
+        public string USN { get; set; }
 
-		public int ConfigId { get; set; }
+        public int BootId { get; set; }
 
-		public string UDN
-		{
-			get
-			{
-				var doubleColonIndex = USN.IndexOf("::");
+        public int ConfigId { get; set; }
 
-				return doubleColonIndex != -1 ? USN.Substring(0, doubleColonIndex) : USN;
-			}
-		}
+        public string UDN
+        {
+            get
+            {
+                var doubleColonIndex = USN.IndexOf("::");
 
-		/// <summary>
-		///     Retrieves the MaxAge property from the CACHE-CONTROL header.
-		/// </summary>
-		/// <param name="cacheControlSettings">
-		///     The value of the SSDP message's CACHE-CONTROL header.      
-		/// </param>
-		/// <returns>
-		///     The retrieved MaxAge property.
-		/// </returns>
-		/// <exception cref="FormatException">
-		///     The cache control settings are in bad format.
-		/// </exception>
-		protected static int ParseMaxAge(string cacheControlSettings)
-		{
-			if (string.IsNullOrEmpty(cacheControlSettings))
-			{
-				return 0;
-			}
+                return doubleColonIndex != -1 ? USN.Substring(0, doubleColonIndex) : USN;
+            }
+        }
 
-			var keyValue = cacheControlSettings.Split('=');
-			if (keyValue.Length == 2)
-			{
-				return Convert.ToInt32(keyValue[1]);
-			}
-			else
-			{
-				throw new FormatException("The cache control settings are in bad format");
-			}
-		}
+        /// <summary>
+        ///     Retrieves the MaxAge property from the CACHE-CONTROL header.
+        /// </summary>
+        /// <param name="cacheControlSettings">
+        ///     The value of the SSDP message's CACHE-CONTROL header.      
+        /// </param>
+        /// <returns>
+        ///     The retrieved MaxAge property.
+        /// </returns>
+        /// <exception cref="FormatException">
+        ///     The cache control settings are in bad format.
+        /// </exception>
+        protected static int ParseMaxAge(string cacheControlSettings)
+        {
+            if (string.IsNullOrEmpty(cacheControlSettings))
+            {
+                return 0;
+            }
 
-		/// <summary>
-		///     Parses the HTTP headers.
-		/// </summary>
-		/// <param name="headerLines">
-		///     The HTTP headers.
-		/// </param>
-		/// <returns>
-		///     The <see cref="IReadOnlyDictionary{TKey,TValue}"/> instance which represents parsed headers as key-value pairs.
-		/// </returns>
-		protected static IReadOnlyDictionary<string, string> ParseHeaders(IEnumerable<string> headerLines)
-		{
-			var result = new Dictionary<string, string>();
+            var keyValue = cacheControlSettings.Split('=');
+            if (keyValue.Length == 2)
+            {
+                return Convert.ToInt32(keyValue[1]);
+            }
+            else
+            {
+                throw new FormatException("The cache control settings are in bad format");
+            }
+        }
 
-			foreach (var headerLine in headerLines)
-			{
-				var keyValue = headerLine.Split(new[] { ":" }, 2, StringSplitOptions.None);
+        /// <summary>
+        ///     Parses the HTTP headers.
+        /// </summary>
+        /// <param name="headerLines">
+        ///     The HTTP headers.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IReadOnlyDictionary{TKey,TValue}"/> instance which represents parsed headers as key-value pairs.
+        /// </returns>
+        protected static IReadOnlyDictionary<string, string> ParseHeaders(IEnumerable<string> headerLines)
+        {
+            var result = new Dictionary<string, string>();
 
-				if (keyValue.Length == 2)
-				{
-					result[keyValue[0].ToUpper()] = keyValue[1].TrimStart(' ');
-				}
-			}
+            foreach (var headerLine in headerLines)
+            {
+                var keyValue = headerLine.Split(new[] { ":" }, 2, StringSplitOptions.None);
 
-			return result;
-		}
+                if (keyValue.Length == 2)
+                {
+                    result[keyValue[0].ToUpper()] = keyValue[1].TrimStart(' ');
+                }
+            }
 
-	    public override string ToString()
-	    {
-	        return $"UDN={UDN}, Location={Location}";
-	    }
-	}
+            return result;
+        }
+
+        public override string ToString()
+        {
+            return $"UDN={UDN}, Location={Location}";
+        }
+    }
 }

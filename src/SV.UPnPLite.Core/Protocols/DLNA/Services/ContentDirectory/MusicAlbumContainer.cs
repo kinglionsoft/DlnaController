@@ -1,18 +1,20 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     public class MusicAlbumContainer : AlbumContainer
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="MusicAlbumContainer"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public MusicAlbumContainer(ILogManager logManager = null)
-			: base(logManager)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="MusicAlbumContainer"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        public MusicAlbumContainer(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

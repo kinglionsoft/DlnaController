@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -22,50 +24,28 @@
 
 		private IEnumerable<string> searchCapabilities;
 
-		#endregion
+        #endregion
 
-		#region Constructors
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaServer" /> class.
-		/// </summary>
-		/// <param name="udn">
-		///     A universally-unique identifier for the device.
-		/// </param>
-		/// <param name="contentDirectoryService">
-		///     A <see cref="IContentDirectoryService"/> to use for managing the media content.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="udn"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="contentDirectoryService"/> is <c>null</c>.
-		/// </exception>
-		public MediaServer(string udn, IContentDirectoryService contentDirectoryService)
-			: base(udn)
-		{
-			contentDirectoryService.EnsureNotNull("contentDirectoryService");
-
-			this.contentDirectoryService = contentDirectoryService;
-		}
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="MediaServer" /> class.
-		/// </summary>
-		/// <param name="udn">
-		///     A universally-unique identifier for the device.
-		/// </param>
-		/// <param name="contentDirectoryService">
-		///     A <see cref="IContentDirectoryService"/> to use for managing the media content.
-		/// </param>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="udn"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="contentDirectoryService"/> is <c>null</c> -OR-
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public MediaServer(string udn, IContentDirectoryService contentDirectoryService, ILogManager logManager)
-			: base(udn, logManager)
+        #region Constructors
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MediaServer" /> class.
+        /// </summary>
+        /// <param name="udn">
+        ///     A universally-unique identifier for the device.
+        /// </param>
+        /// <param name="contentDirectoryService">
+        ///     A <see cref="IContentDirectoryService"/> to use for managing the media content.
+        /// </param>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="udn"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
+        ///     <paramref name="contentDirectoryService"/> is <c>null</c> -OR-
+        ///     <paramref name="logManager"/> is <c>null</c>.
+        /// </exception>
+        public MediaServer(string udn, IContentDirectoryService contentDirectoryService, ILoggerFactory loggerFactory)
+			: base(udn, loggerFactory)
 		{
 			contentDirectoryService.EnsureNotNull("contentDirectoryService");
 
@@ -181,10 +161,7 @@
 
 					return newContainer;
 				}
-				else
-				{
-					throw new FormatException("Container info is missing in the server response");
-				}
+			    throw new FormatException("Container info is missing in the server response");
 			}
 			catch (FormatException ex)
 			{
@@ -244,10 +221,7 @@
 
 					return mediaItem;
 				}
-				else
-				{
-					throw new FormatException("Item info is missing in the server response");
-				}
+			    throw new FormatException("Item info is missing in the server response");
 			}
 			catch (FormatException ex)
 			{
@@ -285,7 +259,7 @@
 
 		        // TODO: Optimize it
 		       // return searchResult.Result.Select(o => (TMedia) o).GroupBy(m => m.Title).Select(g => g.FirstOrDefault());
-		        return searchResult.Result.Select(o => o as TMedia).Distinct();
+		        return searchResult.Result.Select(o => o as TMedia).Distinct(new MediaItemComparer<TMedia>());
 		    }
 		    catch (FormatException ex)
 		    {

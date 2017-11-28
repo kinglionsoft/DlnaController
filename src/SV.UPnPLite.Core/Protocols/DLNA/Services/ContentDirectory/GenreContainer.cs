@@ -1,17 +1,19 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     public class GenreContainer : MediaContainer
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="GenreContainer"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public GenreContainer(ILogManager logManager = null)
-			: base(logManager)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="GenreContainer"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        public GenreContainer(ILoggerFactory loggerFactory)
+			: base(loggerFactory)
 		{
 		}
 

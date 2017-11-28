@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -45,88 +47,54 @@
 
 		private bool isDisposed;
 
-		#endregion
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="SSDPServer" /> class.
-		/// </summary>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information
-		/// </param>
-		private SSDPServer(ILogManager logManager)
-			: this()
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="SSDPServer" /> class.
+        /// </summary>
+        /// <param name="logManager">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information
+        /// </param>
+        private SSDPServer(ILoggerFactory logManager)
 		{
-			if (logManager != null)
-			{
-				logger = logManager.GetLogger<SSDPServer>();
-			}
-			else
-			{
-			    logger = logger.Instance();
-			}
-		}
+		    logger = logManager.CreateLogger(nameof(SSDPServer));
+		    this.StartNotificationsListening();
+        }
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="SSDPServer" /> class.
-		/// </summary>
-		private SSDPServer()
-		{
-			this.StartNotificationsListening();
-		}
+        #endregion
 
-		#endregion
+        #region Properties
 
-		#region Properties
+        /// <summary>
+        ///     An observable collection which contains notifications from devices.
+        /// </summary>
+        public IObservable<NotifyMessage> NotifyMessages { get { return this.notifyMessages; } }
 
-		/// <summary>
-		///     An observable collection which contains notifications from devices.
-		/// </summary>
-		public IObservable<NotifyMessage> NotifyMessages { get { return this.notifyMessages; } }
+        #endregion
 
-		#endregion
+        #region Methods
 
-		#region Methods
-
-		/// <summary>
-		///     Gets a singletone instance of the <see cref="SSDPServer"/>.
-		/// </summary>
-		/// <returns>
-		///     A singletone instance of the <see cref="SSDPServer"/>.
-		/// </returns>
-		public static ISSDPServer GetInstance()
+        /// <summary>
+        ///     Gets a singletone instance of the <see cref="SSDPServer"/>.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <returns>
+        ///     A singletone instance of the <see cref="SSDPServer"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="logManager"/> is <c>null</c>.
+        /// </exception>
+        public static ISSDPServer GetInstance(ILoggerFactory loggerFactory)
 		{
 			lock (instanceSyncObject)
 			{
 				if (instance == null)
 				{
-					instance = new SSDPServer();
-				}
-			}
-
-			return instance;
-		}
-
-		/// <summary>
-		///     Gets a singletone instance of the <see cref="SSDPServer"/>.
-		/// </summary>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <returns>
-		///     A singletone instance of the <see cref="SSDPServer"/>.
-		/// </returns>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public static ISSDPServer GetInstance(ILogManager logManager)
-		{
-			lock (instanceSyncObject)
-			{
-				if (instance == null)
-				{
-					instance = new SSDPServer(logManager);
+					instance = new SSDPServer(loggerFactory);
 				}
 			}
 
@@ -225,11 +193,11 @@
 						searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
 						searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
 
-						logger.Instance().Debug("Sent M-Search request from local endpoint '{0}' to a multicast endpoint '{1}' with search target '{2}'.".F(localEndPoint, multicastEndPoint, searchTarget));
+						logger.LogDebug("Sent M-Search request from local endpoint '{0}' to a multicast endpoint '{1}' with search target '{2}'.".F(localEndPoint, multicastEndPoint, searchTarget));
 					}
 					catch (SocketException ex)
 					{
-						logger.Instance().Warning(ex, "Failed to send M-Search request from local endpoint '{0}' to a multicast endpoint '{1}'.".F(localEndPoint, multicastEndPoint));
+						logger.LogWarning(ex, "Failed to send M-Search request from local endpoint '{0}' to a multicast endpoint '{1}'.".F(localEndPoint, multicastEndPoint));
 					}
 					catch (ObjectDisposedException)
 					{
@@ -285,7 +253,7 @@
 
 		private static void HandleSearchResponseMessage(string message, IObserver<SearchResponseMessage> observer)
 		{
-			logger.Instance().Trace("Received search response message", "Message".As(message));
+			logger.LogTrace("Received search response message", "Message".As(message));
 
 			try
 			{
@@ -294,13 +262,13 @@
 			}
 			catch (ArgumentException ex)
 			{
-				logger.Instance().Warning(ex, "The received M-Search response has been ignored.", "Message".As(message));
+				logger.LogWarning(ex, "The received M-Search response has been ignored.", "Message".As(message));
 			}
 		}
 
 		private static void HandleNotifyMessage(string message, IObserver<NotifyMessage> observer)
 		{
-			logger.Instance().Trace("Received notification message", "Message".As(message));
+			logger.LogTrace("Received notification message", "Message".As(message));
 
 			try
 			{
@@ -309,7 +277,7 @@
 			}
 			catch (ArgumentException ex)
 			{
-				logger.Instance().Warning(ex, "The received notification message has been discarded.", "Message".As(message));
+				logger.LogWarning(ex, "The received notification message has been discarded.", "Message".As(message));
 			}
 		}
 
@@ -328,11 +296,11 @@
 				var incommingMessages = GetIncommingMessagesSequence(this.server);
 				incommingMessages.Subscribe(message => HandleNotifyMessage(message, this.notifyMessages));
 
-				logger.Instance().Info("Started listening for notification messages at {0}".F(localEndPoint));
+				logger.LogInformation("Started listening for notification messages at {0}".F(localEndPoint));
 			}
 			catch (SocketException ex)
 			{
-				logger.Instance().Error(ex, "Can't bind to a {0} for listening for notification messages".F(localEndPoint));
+				logger.LogError(ex, "Can't bind to a {0} for listening for notification messages".F(localEndPoint));
 			}
 		}
 

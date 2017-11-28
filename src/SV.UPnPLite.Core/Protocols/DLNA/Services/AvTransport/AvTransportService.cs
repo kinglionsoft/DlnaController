@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     using System;
@@ -12,29 +14,7 @@ namespace SV.UPnPLite.Core
     public class AvTransportService : UPnPService, IAvTransportService
 	{
 		#region Constructors
-
-		/// <summary>
-		///     Initializes a new instanceId of the <see cref="AvTransportService" /> class.
-		/// </summary>
-		/// <param name="serviceType">
-		///     A type of the service.
-		/// </param>
-		/// <param name="controlUri">
-		///     An URL for sending commands to the service.
-		/// </param>
-		/// <param name="eventsUri">
-		///     An URL for subscrinbing to service's events.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="serviceType"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="controlUri"/> is <c>null</c> -OR-
-		///     <paramref name="eventsUri"/> is <c>null</c>.
-		/// </exception>
-		public AvTransportService(string serviceType, Uri controlUri, Uri eventsUri)
-			: base(serviceType, controlUri, eventsUri)
-		{
-		}
-
+        
 		/// <summary>
 		///     Initializes a new instanceId of the <see cref="AvTransportService" /> class.
 		/// </summary>
@@ -56,7 +36,7 @@ namespace SV.UPnPLite.Core
 		///     <paramref name="eventsUri"/> is <c>null</c> -OR-
 		///     <paramref name="logManager"/> is <c>null</c>.
 		/// </exception>
-		public AvTransportService(string serviceType, Uri controlUri, Uri eventsUri, ILogManager logManager)
+		public AvTransportService(string serviceType, Uri controlUri, Uri eventsUri, ILoggerFactory logManager)
 			: base(serviceType, controlUri, eventsUri, logManager)
 		{
 		}

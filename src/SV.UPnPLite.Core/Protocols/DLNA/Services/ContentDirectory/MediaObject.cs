@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Extensions.Logging;
+
 namespace SV.UPnPLite.Core
 {
     using System;
@@ -27,35 +29,29 @@ namespace SV.UPnPLite.Core
 		private readonly List<MediaResource> resources = new List<MediaResource>();
 
 		private readonly ILogger logger;
+        private readonly ILoggerFactory loggerFactory;
+        #endregion
 
-		private readonly ILogManager logManager;
+        #region Constructors
 
-		#endregion
-
-		#region Constructors
-
-		/// <summary>
-		///     Initializes the <see cref="MediaObject" /> class.
-		/// </summary>
-		static MediaObject()
+        /// <summary>
+        ///     Initializes the <see cref="MediaObject" /> class.
+        /// </summary>
+        static MediaObject()
 		{
 			InitializeMediaObjectTypes();
 		}
 
-		/// <summary>
-		///		Initializes a new instance of the <see cref="MediaObject"/> class.
-		/// </summary>
-		/// <param name="logManager">
-		///		The log manager to use for logging.
-		///	</param>
-		public MediaObject(ILogManager logManager = null)
+        /// <summary>
+        ///		Initializes a new instance of the <see cref="MediaObject"/> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///		The log manager to use for logging.
+        ///	</param>
+        protected MediaObject(ILoggerFactory loggerFactory)
 		{
-			this.logManager = logManager;
-
-			if (logManager != null)
-			{
-				this.logger = logManager.GetLogger(this.GetType());
-			}
+		    this.loggerFactory = loggerFactory;
+		    this.logger = loggerFactory.CreateLogger(this.GetType().Name);
 		}
 
 		#endregion
@@ -139,7 +135,7 @@ namespace SV.UPnPLite.Core
 		/// <exception cref="ArgumentNullException">
 		///     <paramref name="didlLiteXml"/> is <c>null</c> or <see cref="string.Empty"/>.
 		/// </exception>
-		public static MediaObject Create(string didlLiteXml, ILogManager logManager)
+		public static MediaObject Create(string didlLiteXml, ILoggerFactory logManager)
 		{
 			didlLiteXml.EnsureNotNull("didlLiteXml");
 
@@ -193,11 +189,11 @@ namespace SV.UPnPLite.Core
 						}
 						catch (FormatException ex)
 						{
-							this.logger.Instance().Warning(ex, "Unable to parse value '{0}' for key '{1}'.".F(xmlReader.Value, xmlReader.LocalName), "Metadata".As(objectXml));
+							this.logger.LogWarning(ex, "Unable to parse value '{0}' for key '{1}'.".F(xmlReader.Value, xmlReader.LocalName), "Metadata".As(objectXml));
 						}
 						catch (OverflowException ex)
 						{
-							this.logger.Instance().Warning(ex, "Unable to parse value '{0}' for key '{1}'.".F(xmlReader.Value, xmlReader.LocalName), "Metadata".As(objectXml));
+							this.logger.LogWarning(ex, "Unable to parse value '{0}' for key '{1}'.".F(xmlReader.Value, xmlReader.LocalName), "Metadata".As(objectXml));
 						}
 					}
 
@@ -224,7 +220,7 @@ namespace SV.UPnPLite.Core
 								}
 								catch (FormatException ex)
 								{
-									this.logger.Instance().Warning(ex, "Unable to parse value '{0}' for key '{1}'.".F(val, name), "Metadata".As(objectXml));
+									this.logger.LogWarning(ex, "Unable to parse value '{0}' for key '{1}'.".F(val, name), "Metadata".As(objectXml));
 								}
 							}
 						}
@@ -270,7 +266,7 @@ namespace SV.UPnPLite.Core
 			}
 			else if (key.Is("res"))
 			{
-				this.resources.Add(new MediaResource(this.logManager).Deserialize(value));
+				this.resources.Add(new MediaResource(this.loggerFactory).Deserialize(value));
 			}
 		}
 
@@ -293,12 +289,11 @@ namespace SV.UPnPLite.Core
 			knownMediaObjectTypes["object.container.person.musicArtist"] = typeof(MusicArtistContainer);
 		}
 
-		private static MediaObject CreateMediaObject(string contentClass, ILogManager logManager)
+		private static MediaObject CreateMediaObject(string contentClass, ILoggerFactory loggerFactory)
 		{
 			MediaObject result = null;
-			Type mediaObjectType;
 
-			if (knownMediaObjectTypes.TryGetValue(contentClass, out mediaObjectType) == false)
+		    if (knownMediaObjectTypes.TryGetValue(contentClass, out var mediaObjectType) == false)
 			{
 				// The type for object with such class not found. Lets find the closest type.
 				var maxCoincidence = 0;
@@ -314,12 +309,12 @@ namespace SV.UPnPLite.Core
 					}
 				}
 
-				logManager?.GetLogger<MediaObject>().Instance().Debug("It looks like the type for object of class '{0}' is not implemented. The type for '{1}' will be used instead.".F(contentClass, fallbackClass));
+			    loggerFactory.CreateLogger(nameof(CreateMediaObject)).LogDebug("It looks like the type for object of class '{0}' is not implemented. The type for '{1}' will be used instead.".F(contentClass, fallbackClass));
 			}
 
 			if (mediaObjectType != null)
 			{
-				result = Activator.CreateInstance(mediaObjectType, logManager) as MediaObject;
+				result = Activator.CreateInstance(mediaObjectType, loggerFactory) as MediaObject;
 			}
 
 			return result;

@@ -20,7 +20,7 @@ namespace SV.UPnPLite.Core
     ///     elements, i.e. elements, which are received after subscription. When all subscribers kill their subscripton, the sequece stops generating elements by killing its
     ///     own subscription created by calling custom subscribe methods passed via constructor.
     /// </remarks>
-    internal class OnDemandObservable<TResult> : ObservableBase<TResult>, IDisposable
+    public class OnDemandObservable<TResult> : ObservableBase<TResult>, IDisposable
 	{
 		#region Fields
 

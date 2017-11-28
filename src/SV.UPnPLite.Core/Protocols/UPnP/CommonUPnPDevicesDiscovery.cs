@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -8,27 +10,19 @@
     /// </summary>
     public class CommonUPnPDevicesDiscovery : UPnPDevicesDiscovery<CommonUPnPDevice>
 	{
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="CommonUPnPDevicesDiscovery" /> class.
-		/// </summary>
-		public CommonUPnPDevicesDiscovery()
-			: base("upnp:rootdevice")
-		{
-		}
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="CommonUPnPDevicesDiscovery" /> class.
-		/// </summary>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public CommonUPnPDevicesDiscovery(ILogManager logManager)
-			: base("upnp:rootdevice", logManager)
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="CommonUPnPDevicesDiscovery" /> class.
+        /// </summary>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="logManager"/> is <c>null</c>.
+        /// </exception>
+        public CommonUPnPDevicesDiscovery(ILoggerFactory loggerFactory)
+			: base("upnp:rootdevice", loggerFactory)
 		{
 		}
 
@@ -53,7 +47,7 @@
 		/// </returns>
 		protected override CommonUPnPDevice CreateDeviceInstance(string udn, string name, IEnumerable<UPnPService> services)
 		{
-			var device = new CommonUPnPDevice(udn) { Services = services };
+			var device = new CommonUPnPDevice(udn, this.loggerFactory) { Services = services };
 
 			return device;
 		}
@@ -80,7 +74,7 @@
 		/// </exception>
 		protected override UPnPService CreateServiceInstance(string serviceType, Uri controlUri, Uri eventsUri)
 		{
-			return new UPnPService(serviceType, controlUri, eventsUri, this.logManager);
+			return new UPnPService(serviceType, controlUri, eventsUri, this.loggerFactory);
 		}
 
 		#endregion

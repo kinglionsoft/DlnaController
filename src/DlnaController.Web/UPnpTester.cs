@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using SV.UPnPLite.Protocols.DLNA;
-using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory;
-using SV.UPnPLite.Protocols.UPnP;
+using Microsoft.Extensions.Logging;
+using SV.UPnPLite.Core;
 
 namespace DlnaController.Web
 {
@@ -13,7 +12,7 @@ namespace DlnaController.Web
         private static MediaServer _mini;
 
         private static MediaRenderer _renderer;
-       public  static void Test2()
+       public  static void Test2(ILoggerFactory loggerFactory)
         {
             //var client = new HttpUClient();
             //client.OnResponse += Client_OnResponse;
@@ -25,7 +24,8 @@ namespace DlnaController.Web
             //_containerDiscovery.AllRoots.OnContainerChanged += new CpRootContainer.Delegate_OnContainerChanged(ContainerChangedSink);
 
 
-            var devicesDiscovery = new CommonUPnPDevicesDiscovery();
+            var devicesDiscovery = new CommonUPnPDevicesDiscovery(loggerFactory);
+            
 
             // Receiving notifications about new devices added to a network
             devicesDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
@@ -50,8 +50,8 @@ namespace DlnaController.Web
             });
 
 
-            var mediaServersDiscovery = new MediaServersDiscovery();
-            var mediaRenderersDiscovery = new MediaRenderersDiscovery();
+            var mediaServersDiscovery = new MediaServersDiscovery(loggerFactory);
+            var mediaRenderersDiscovery = new MediaRenderersDiscovery(loggerFactory);
 
             // Enumerating currently available servers
             foreach (var server in mediaServersDiscovery.DiscoveredDevices)

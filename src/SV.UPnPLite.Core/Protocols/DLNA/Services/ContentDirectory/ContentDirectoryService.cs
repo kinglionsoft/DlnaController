@@ -1,4 +1,6 @@
-﻿namespace SV.UPnPLite.Core
+﻿using Microsoft.Extensions.Logging;
+
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
@@ -21,57 +23,39 @@
 			IgnoreProcessingInstructions = true
 		};
 
-		#endregion
+	    private readonly ILoggerFactory _loggerFactory;
 
-		#region Constructors
+        #endregion
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="ContentDirectoryService" /> class.
-		/// </summary>
-		/// <param name="serviceType">
-		///     A type of the service.
-		/// </param>
-		/// <param name="controlUri">
-		///     An URL for sending commands to the service.
-		/// </param>
-		/// <param name="eventsUri">
-		///     An URL for subscrinbing to service's events.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="serviceType"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="controlUri"/> is <c>null</c> -OR-
-		///     <paramref name="eventsUri"/> is <c>null</c>.
-		/// </exception>
-		public ContentDirectoryService(string serviceType, Uri controlUri, Uri eventsUri)
-			: base(serviceType, controlUri, eventsUri)
-		{
-		}
+        #region Constructors
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="ContentDirectoryService" /> class.
-		/// </summary>
-		/// <param name="serviceType">
-		///     A type of the service.
-		/// </param>
-		/// <param name="controlUri">
-		///     An URL for sending commands to the service.
-		/// </param>
-		/// <param name="eventsUri">
-		///     An URL for subscrinbing to service's events.
-		/// </param>
-		/// <param name="logManager">
-		///     The <see cref="ILogManager"/> to use for logging the debug information.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="serviceType"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
-		///     <paramref name="controlUri"/> is <c>null</c> -OR-
-		///     <paramref name="eventsUri"/> is <c>null</c> -OR-
-		///     <paramref name="logManager"/> is <c>null</c>.
-		/// </exception>
-		public ContentDirectoryService(string serviceType, Uri controlUri, Uri eventsUri, ILogManager logManager)
-			: base(serviceType, controlUri, eventsUri, logManager)
-		{
-		}
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ContentDirectoryService" /> class.
+        /// </summary>
+        /// <param name="serviceType">
+        ///     A type of the service.
+        /// </param>
+        /// <param name="controlUri">
+        ///     An URL for sending commands to the service.
+        /// </param>
+        /// <param name="eventsUri">
+        ///     An URL for subscrinbing to service's events.
+        /// </param>
+        /// <param name="loggerFactory">
+        ///     The <see cref="ILoggerFactory"/> to use for logging the debug information.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="serviceType"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
+        ///     <paramref name="controlUri"/> is <c>null</c> -OR-
+        ///     <paramref name="eventsUri"/> is <c>null</c> -OR-
+        ///     <paramref name="logManager"/> is <c>null</c>.
+        /// </exception>
+        public ContentDirectoryService(string serviceType, Uri controlUri, Uri eventsUri, ILoggerFactory loggerFactory)
+			: base(serviceType, controlUri, eventsUri, loggerFactory)
+        {
+            _loggerFactory = loggerFactory;
+
+        }
 
 		#endregion
 
@@ -250,7 +234,7 @@
 						var element = xmlReader.ReadOuterXml();
 						if (element != string.Empty)
 						{
-							var mediaObject = MediaObject.Create(element, this.LogManager);
+							var mediaObject = MediaObject.Create(element, this._loggerFactory);
 
 							if (mediaObject != null)
 							{
@@ -258,7 +242,7 @@
 							}
 							else
 							{
-								this.logger.Instance().Warning("MediaObject class '{0}' is unknown. The MediaObject has been ignored.".F(element), "Metadata".As(mediaObjectsXml));
+								this.logger.LogWarning("MediaObject class '{0}' is unknown. The MediaObject has been ignored.".F(element), "Metadata".As(mediaObjectsXml));
 							}
 						}
 					}
