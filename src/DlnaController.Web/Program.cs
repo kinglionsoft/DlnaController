@@ -18,8 +18,19 @@ namespace DlnaController.Web
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
+           new WebHostBuilder()
+            .UseKestrel()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .ConfigureLogging((hostingContext, logging) =>
+            {
+                if (hostingContext.HostingEnvironment.IsDevelopment())
+                {
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                    logging.AddConsole();
+                    logging.AddDebug();
+                }
+            })
+            .UseStartup<Startup>()
+            .Build();
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace DlnaController.Web
 {
@@ -27,23 +28,50 @@ namespace DlnaController.Web
 
             services.AddUPnPManager();
 
-            services.AddMvc();
+            services.AddMvc(mvc =>
+                {
+                   
+                })
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                    options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Unspecified;
+                    options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            // add NLog
+           // loggerFactory.AddNLog();
+            // add NLog.Web
+           // app.AddNLogWeb();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
             app.UseUPnPManager();
 
-            app.UseMvc();
+            app.UseMvc(routeBuilder =>
+            {
+                routeBuilder.MapRoute(name: "areaRoute",
+                    template: "{area:exists}/{controller=Home}/{action=Index}");
+
+                routeBuilder.MapRoute(
+                    name: "default",
+                    template: "api/{controller}/{action}");
+            });
 
 
-           // UPnpTester.Test2(app.ApplicationServices.GetService<ILoggerFactory>());
+            // UPnpTester.Test2(app.ApplicationServices.GetService<ILoggerFactory>());
         }
     }
 }

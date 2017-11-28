@@ -70,6 +70,22 @@ namespace UPnP.Service
                 this._rendererServers.TryRemove(e.Device.UDN, out var gone);
             });
         }
+
+        #region Servers
+
+        public IList<MediaServer> GetOnlineMediaServers()
+        {
+            return _mediaServers.Select(x => x.Value).ToList();
+        }
+
+        public IList<MediaRenderer> GetOnlineMediaRenderers()
+        {
+            return _rendererServers.Select(x => x.Value).ToList();
+        }
+
+        #endregion
+
+        #region Medias
         
         public async Task<IEnumerable<TMedia>> GetMediasAsync<TMedia>(MediaServer mediaServer, bool cacheFirst = true) where TMedia: MediaItem
         {
@@ -98,6 +114,10 @@ namespace UPnP.Service
             throw new FriendlyException(-404, "媒体服务器不存在");
         }
 
+        #endregion
+
+        #region Remote Control
+        
         public async Task PlayAsync(MediaRenderer renderer, MediaItem media)
         {
             await renderer.OpenAsync(media);
@@ -114,6 +134,10 @@ namespace UPnP.Service
                     var media = videoItems.FirstOrDefault(x => x.Id == mediaId);
                     if (media != null)
                     {
+                        foreach (var item in media.Resources)
+                        {
+                            item.Uri = item.Uri.Replace("127.0.0.1", "192.168.1.10");
+                        }
                         return PlayAsync(renderer, media);
                     }
                 }
@@ -122,6 +146,8 @@ namespace UPnP.Service
             _logger.LogWarning($"Could not find {rendererUDN} in found renderer servers.");
             throw new FriendlyException(-404, "视频不存在或者已删除");
         }
+
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false; // 要检测冗余调用
@@ -159,6 +185,5 @@ namespace UPnP.Service
             GC.SuppressFinalize(this);
         }
         #endregion
-
     }
 }

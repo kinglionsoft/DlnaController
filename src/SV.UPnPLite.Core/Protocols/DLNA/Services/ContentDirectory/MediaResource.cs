@@ -102,7 +102,7 @@ namespace SV.UPnPLite.Core
 		/// <summary>
 		///     Gets a URI via which the resource can be accessed.
 		/// </summary>
-		public string Uri { get; internal set; }
+		public string Uri { get; set; }
 
 		/// <summary>
 		///     Gets a metadata associated with the resource.
