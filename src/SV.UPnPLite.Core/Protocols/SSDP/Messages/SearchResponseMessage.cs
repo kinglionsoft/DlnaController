@@ -1,15 +1,13 @@
-﻿
-namespace SV.UPnPLite.Protocols.SSDP.Messages
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	/// <summary>
-	///     Defines a response to a MSearch request message.
-	/// </summary>
-	internal class SearchResponseMessage : SSDPMessage
+    /// <summary>
+    ///     Defines a response to a MSearch request message.
+    /// </summary>
+    internal class SearchResponseMessage : SSDPMessage
 	{
 		private const string RFC1123DateFormat = "ddd, dd MMM yyyy hh:mm:ss EST";
 

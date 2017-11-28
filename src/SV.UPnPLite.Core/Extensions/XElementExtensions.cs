@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Extensions
+namespace SV.UPnPLite.Core
 {
 	using System.Xml.Linq;
 
@@ -19,14 +19,7 @@ namespace SV.UPnPLite.Extensions
 		/// </returns>
 		public static string ValueOrDefault(this XElement element)
 		{
-			if (element != null)
-			{
-				return element.Value;
-			}
-			else
-			{
-				return string.Empty;
-			}
+		    return element != null ? element.Value : string.Empty;
 		}
 	}
 }

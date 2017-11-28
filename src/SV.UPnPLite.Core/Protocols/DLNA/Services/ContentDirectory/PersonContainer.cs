@@ -1,9 +1,6 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-
-	public class PersonContainer : MediaContainer
+    public class PersonContainer : MediaContainer
 	{
 		#region Constructors
 

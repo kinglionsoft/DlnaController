@@ -1,12 +1,9 @@
-﻿
-namespace SV.UPnPLite.Protocols.UPnP
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-
-	/// <summary>
-	///     Defines a version of the UPnP object (device/service).
-	/// </summary>
-	public struct UPnPVersion
+    /// <summary>
+    ///     Defines a version of the UPnP object (device/service).
+    /// </summary>
+    public struct UPnPVersion
 	{
 		/// <summary>
 		///     The major number of the version.

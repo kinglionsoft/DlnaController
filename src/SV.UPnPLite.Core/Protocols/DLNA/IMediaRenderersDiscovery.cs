@@ -1,14 +1,12 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Protocols.UPnP;
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
 
-	/// <summary>
-	///     Defines methods for discovering Media Renderer devices.
-	/// </summary>
-	public interface IMediaRenderersDiscovery
+    /// <summary>
+    ///     Defines methods for discovering Media Renderer devices.
+    /// </summary>
+    public interface IMediaRenderersDiscovery
 	{
 		/// <summary>
 		///     Gets a list of already discovered devices.

@@ -1,13 +1,11 @@
-﻿
-namespace SV.UPnPLite.Protocols.SSDP
+﻿namespace SV.UPnPLite.Core
 {
-	using System;
-	using SV.UPnPLite.Protocols.SSDP.Messages;
+    using System;
 
-	/// <summary>
-	///     Defines members for sending/receiving SSDP messages.
-	/// </summary>
-	internal interface ISSDPServer
+    /// <summary>
+    ///     Defines members for sending/receiving SSDP messages.
+    /// </summary>
+    internal interface ISSDPServer
 	{
 		/// <summary>
 		///     An observable collection which contains notifications from devices.

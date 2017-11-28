@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+namespace SV.UPnPLite.Core
 {
 	/// <summary>
 	///     Specifies a browse option to be used for browsing the Content Directory.

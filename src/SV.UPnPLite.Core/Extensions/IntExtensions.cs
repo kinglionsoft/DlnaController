@@ -1,12 +1,12 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Extensions
+namespace SV.UPnPLite.Core
 {
 	using System;
 
 	/// <summary>
 	///     Defines extension methods for <see cref="int"/>.
 	/// </summary>
-	public static class IntExtensions
+	internal static class IntExtensions
 	{
 		/// <summary>
 		///     Converts an <paramref name="errorCode"/> to <see cref="MediaRendererError"/>.

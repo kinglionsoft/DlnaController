@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.AvTransport
+namespace SV.UPnPLite.Core
 {
 	/// <summary>
 	///     Defines information associated with the current transport state.

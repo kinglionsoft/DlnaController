@@ -1,20 +1,15 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.UPnP;
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Net;
-	using System.Threading.Tasks;
-	using System.Xml;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
+    using System.Xml;
 
-	/// <summary>
-	///     Enables control of the media on a MediaServer.
-	/// </summary>
-	public class ContentDirectoryService : UPnPService, IContentDirectoryService
+    /// <summary>
+    ///     Enables control of the media on a MediaServer.
+    /// </summary>
+    public class ContentDirectoryService : UPnPService, IContentDirectoryService
 	{
 		#region Fields
 

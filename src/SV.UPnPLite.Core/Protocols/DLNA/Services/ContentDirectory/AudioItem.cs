@@ -1,14 +1,10 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
-
-	/// <summary>
-	///     Represents a piece of content that, when rendered, generates some audio2. It is atomic in the sense that it does not contain other objects in the ContentDirectory. 
-	///     It typically has at least 1 <see cref="MediaObject.Resources"/> element.
-	/// </summary>
-	public class AudioItem : MediaItem
+    /// <summary>
+    ///     Represents a piece of content that, when rendered, generates some audio2. It is atomic in the sense that it does not contain other objects in the ContentDirectory. 
+    ///     It typically has at least 1 <see cref="MediaObject.Resources"/> element.
+    /// </summary>
+    public class AudioItem : MediaItem
 	{
 		#region Properties
 

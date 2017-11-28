@@ -1,10 +1,7 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
-
-	public class PhotoItem : ImageItem
+    public class PhotoItem : ImageItem
 	{
 		#region Constructors
 

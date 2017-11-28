@@ -1,10 +1,6 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
-
-	public class MusicArtistContainer : PersonContainer
+    public class MusicArtistContainer : PersonContainer
 	{
 		#region Constructors
 

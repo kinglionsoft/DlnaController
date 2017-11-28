@@ -1,16 +1,14 @@
-﻿
-namespace SV.UPnPLite.Protocols.UPnP
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
-	/// <summary>
-	///     Defines an error that occurred on a UPnP Service.
-	/// </summary>    
-	public class UPnPServiceException : Exception
+    /// <summary>
+    ///     Defines an error that occurred on a UPnP Service.
+    /// </summary>    
+    public class UPnPServiceException : Exception
 	{
 		#region Constructors
 

@@ -2,20 +2,15 @@
 using System.Net.Http;
 using System.Text;
 
-namespace SV.UPnPLite.Protocols.UPnP
+namespace SV.UPnPLite.Core
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Net;
     using System.Reactive.Linq;
     using System.Reactive.Subjects;
     using System.Xml.Linq;
-    using SV.UPnPLite.Extensions;
-    using SV.UPnPLite.Logging;
-    using SV.UPnPLite.Protocols.SSDP;
-    using SV.UPnPLite.Protocols.SSDP.Messages;
 
     public abstract class UPnPDevicesDiscovery<TDevice> : IDisposable where TDevice : UPnPDevice
     {

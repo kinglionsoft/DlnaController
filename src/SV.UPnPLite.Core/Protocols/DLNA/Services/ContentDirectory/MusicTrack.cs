@@ -1,14 +1,11 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using System;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
+    using System;
 
-	/// <summary>
-	///      Represents a discrete piece of audio that should be interpreted as music.
-	/// </summary>
-	public class MusicTrack : AudioItem
+    /// <summary>
+    ///      Represents a discrete piece of audio that should be interpreted as music.
+    /// </summary>
+    public class MusicTrack : AudioItem
 	{
 		#region Properties
 

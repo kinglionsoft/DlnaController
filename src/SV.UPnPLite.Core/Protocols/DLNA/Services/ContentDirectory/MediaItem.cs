@@ -1,13 +1,9 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
-
-	/// <summary>
-	///     Defines the media item which can be played on MediaRenderer.
-	/// </summary>
-	public class MediaItem : MediaObject
+    /// <summary>
+    ///     Defines the media item which can be played on MediaRenderer.
+    /// </summary>
+    public class MediaItem : MediaObject
 	{
 		#region Properties
 

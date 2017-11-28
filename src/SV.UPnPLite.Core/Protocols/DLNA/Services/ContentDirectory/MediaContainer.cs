@@ -1,14 +1,9 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
-
-	/// <summary>
-	///     Defines a media object which contains other media objects.
-	/// </summary>
-	public class MediaContainer : MediaObject
+    /// <summary>
+    ///     Defines a media object which contains other media objects.
+    /// </summary>
+    public class MediaContainer : MediaObject
 	{
 		#region Properties
 

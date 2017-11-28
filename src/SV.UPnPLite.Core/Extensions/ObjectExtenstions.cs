@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Extensions
+namespace SV.UPnPLite.Core
 {
 	using System;
 
@@ -47,14 +47,7 @@ namespace SV.UPnPLite.Extensions
 		/// </returns>
 		public static string ToStringOrEmpty(this object obj)
 		{
-			if (obj != null)
-			{
-				return obj.ToString();
-			}
-			else
-			{
-				return string.Empty;
-			}
+		    return obj != null ? obj.ToString() : string.Empty;
 		}
 	}
 }

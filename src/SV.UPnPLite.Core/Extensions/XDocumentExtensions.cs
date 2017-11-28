@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Extensions
+namespace SV.UPnPLite.Core
 {
 	using System.Text;
 	using System.Xml.Linq;

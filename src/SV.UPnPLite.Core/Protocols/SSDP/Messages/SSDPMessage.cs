@@ -1,14 +1,12 @@
-﻿
-namespace SV.UPnPLite.Protocols.SSDP.Messages
-{
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Collections.Generic;
+﻿namespace SV.UPnPLite.Core
 
-	/// <summary>
-	///     The base class for all SSDP messages.
-	/// </summary>
-	internal class SSDPMessage
+    using System;
+using System.Collections.Generic;
+
+/// <summary>
+///     The base class for all SSDP messages.
+/// </summary>
+internal class SSDPMessage
 	{
 		public int MaxAge { get; set; }
 

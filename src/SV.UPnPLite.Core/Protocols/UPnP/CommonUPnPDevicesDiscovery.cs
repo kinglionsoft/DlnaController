@@ -1,14 +1,12 @@
-﻿
-namespace SV.UPnPLite.Protocols.UPnP
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
 
-	/// <summary>
-	///     Discovers all UPnP devices over the network.
-	/// </summary>
-	public class CommonUPnPDevicesDiscovery : UPnPDevicesDiscovery<CommonUPnPDevice>
+    /// <summary>
+    ///     Discovers all UPnP devices over the network.
+    /// </summary>
+    public class CommonUPnPDevicesDiscovery : UPnPDevicesDiscovery<CommonUPnPDevice>
 	{
 		#region Constructors
 

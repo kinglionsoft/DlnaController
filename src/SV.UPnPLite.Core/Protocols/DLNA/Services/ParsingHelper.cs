@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services
+namespace SV.UPnPLite.Core
 {
 	using System;
 

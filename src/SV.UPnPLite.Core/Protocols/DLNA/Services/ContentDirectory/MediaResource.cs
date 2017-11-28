@@ -1,17 +1,14 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+namespace SV.UPnPLite.Core
 {
-	using System;
-	using System.IO;
-	using System.Xml;
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
+    using System;
+    using System.IO;
+    using System.Xml;
 
-	/// <summary>
-	///     Defines a media resource -  some type of a binary asset, such as photo, song, video, etc.
-	///  </summary>
-	public class MediaResource
+    /// <summary>
+    ///     Defines a media resource -  some type of a binary asset, such as photo, song, video, etc.
+    ///  </summary>
+    public class MediaResource
 	{
 		#region Fields
 

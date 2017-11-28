@@ -1,18 +1,13 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA
+﻿namespace SV.UPnPLite.Core
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory;
-	using SV.UPnPLite.Protocols.UPnP;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	/// <summary>
-	///     Discovers the Media Server devices.
-	/// </summary>
-	public class MediaServersDiscovery : UPnPDevicesDiscovery<MediaServer>, IMediaServersDiscovery
+    /// <summary>
+    ///     Discovers the Media Server devices.
+    /// </summary>
+    public class MediaServersDiscovery : UPnPDevicesDiscovery<MediaServer>, IMediaServersDiscovery
 	{
 		#region Constructors
 

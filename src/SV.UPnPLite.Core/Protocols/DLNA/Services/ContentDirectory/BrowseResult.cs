@@ -1,5 +1,4 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
 	using System.Collections.Generic;
 

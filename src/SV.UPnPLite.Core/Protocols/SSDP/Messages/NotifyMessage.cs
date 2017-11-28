@@ -1,16 +1,13 @@
-﻿
-
-namespace SV.UPnPLite.Protocols.SSDP.Messages
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	/// <summary>
-	///     Defines the NOTIFY ssdp message.
-	/// </summary>
-	internal class NotifyMessage : SSDPMessage
+    /// <summary>
+    ///     Defines the NOTIFY ssdp message.
+    /// </summary>
+    internal class NotifyMessage : SSDPMessage
 	{
 		public string Host { get; set; }
 

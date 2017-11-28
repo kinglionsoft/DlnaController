@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite
+namespace SV.UPnPLite.Core
 {
 	using System;
 	using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace SV.UPnPLite
 	/// <summary>
 	///     The base class for all <see cref="XName"/> comparers.
 	/// </summary>
-	public abstract class XNameComparer : IEqualityComparer<XName>
+	internal abstract class XNameComparer : IEqualityComparer<XName>
 	{
 		#region Properties
 		/// <summary>

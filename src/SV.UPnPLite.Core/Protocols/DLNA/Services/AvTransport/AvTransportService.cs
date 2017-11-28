@@ -1,19 +1,15 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.AvTransport
+namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.UPnP;
-	using System;
-	using System.Collections.Generic;
-	using System.Net;
-	using System.Threading.Tasks;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-	/// <summary>
-	///     Enables control over the transport of audio and video streams. The service type defines a  ‘common’ model for A/V transport control suitable for a 
-	///     generic user interface. It can be used to control a wide variety of disc, tape and solid-state based media devices such as CD players, VCRs and MP3 players. 
-	/// </summary>
-	public class AvTransportService : UPnPService, IAvTransportService
+    /// <summary>
+    ///     Enables control over the transport of audio and video streams. The service type defines a  ‘common’ model for A/V transport control suitable for a 
+    ///     generic user interface. It can be used to control a wide variety of disc, tape and solid-state based media devices such as CD players, VCRs and MP3 players. 
+    /// </summary>
+    public class AvTransportService : UPnPService, IAvTransportService
 	{
 		#region Constructors
 

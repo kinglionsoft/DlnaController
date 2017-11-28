@@ -1,16 +1,12 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Protocols.UPnP;
-	using System;
-	using System.Collections.Generic;
-	using System.Net;
-	using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-	/// <summary>
-	///     Defines members for managing the media on a MediaServer.
-	/// </summary>
-	public interface IContentDirectoryService
+    /// <summary>
+    ///     Defines members for managing the media on a MediaServer.
+    /// </summary>
+    public interface IContentDirectoryService
 	{
 		/// <summary>
 		///     Allows the caller to incrementally browse the native hierarchy of the Content Directory objects exposed by the <see cref="ContentDirectoryService"/>, including 

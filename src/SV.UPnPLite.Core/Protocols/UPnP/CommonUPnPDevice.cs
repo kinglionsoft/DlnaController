@@ -1,13 +1,11 @@
-﻿
-namespace SV.UPnPLite.Protocols.UPnP
+﻿namespace SV.UPnPLite.Core
 {
-	using System;
-	using System.Collections.Generic;
+    using System.Collections.Generic;
 
-	/// <summary>
-	///     Allows low level control of any UPnP device.
-	/// </summary>
-	public class CommonUPnPDevice : UPnPDevice
+    /// <summary>
+    ///     Allows low level control of any UPnP device.
+    /// </summary>
+    public class CommonUPnPDevice : UPnPDevice
 	{
 		#region Constructors
 

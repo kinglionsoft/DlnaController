@@ -1,16 +1,15 @@
 ﻿
 using System.Linq;
 
-namespace SV.UPnPLite.Extensions
+namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Logging;
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
 
-	/// <summary>
-	///     Defines extension methods for <see cref="ILogger"/>.
-	/// </summary>
-	public static class LoggerExtensions
+    /// <summary>
+    ///     Defines extension methods for <see cref="ILogger"/>.
+    /// </summary>
+    public static class LoggerExtensions
 	{
 		/// <summary>
 		///     Ensures that instance exists. If it doesn't - the stub is returned.

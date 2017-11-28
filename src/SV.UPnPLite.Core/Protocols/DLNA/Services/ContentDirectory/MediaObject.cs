@@ -1,19 +1,16 @@
 ﻿
-namespace SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory
+namespace SV.UPnPLite.Core
 {
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
-	using System.Xml;
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.DLNA.Services.ContentDirectory.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Xml;
 
-	/// <summary>
-	///     The base class for all media hosted by Media Server.
-	/// </summary>
-	public abstract class MediaObject
+    /// <summary>
+    ///     The base class for all media hosted by Media Server.
+    /// </summary>
+    public abstract class MediaObject
 	{
 		#region Fields
 

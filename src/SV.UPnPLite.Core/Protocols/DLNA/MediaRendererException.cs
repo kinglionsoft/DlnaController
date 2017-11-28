@@ -1,13 +1,11 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA
+﻿namespace SV.UPnPLite.Core
 {
-	using System;
-	using SV.UPnPLite.Protocols.UPnP;
+    using System;
 
-	/// <summary>
-	///     Defines an error that occurred on a Media Renderer.
-	/// </summary>
-	public class MediaRendererException : UPnPDeviceException<MediaRenderer>
+    /// <summary>
+    ///     Defines an error that occurred on a Media Renderer.
+    /// </summary>
+    public class MediaRendererException : UPnPDeviceException<MediaRenderer>
 	{
 		#region Constructors
 

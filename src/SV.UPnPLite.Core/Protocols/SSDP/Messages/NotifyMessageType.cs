@@ -1,5 +1,4 @@
-﻿
-namespace SV.UPnPLite.Protocols.SSDP.Messages
+﻿namespace SV.UPnPLite.Core
 {
 	/// <summary>
 	///     Defines types of the SSDP's Notify message.

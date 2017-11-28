@@ -1,27 +1,26 @@
 ﻿
-namespace SV.UPnPLite
+namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Reactive;
-	using System.Reactive.Disposables;
-	using System.Reactive.Subjects;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reactive;
+    using System.Reactive.Disposables;
+    using System.Reactive.Subjects;
 
-	/// <summary>
-	///     An observable sequence which generates elements if at least one subscriber exists.
-	/// </summary>
-	/// <typeparam name="TResult">
-	///     The type of the elements in the produced sequence.
-	/// </typeparam>
-	/// <remarks>
-	///     This is a combination of cold and hot subscription. In iddle state, the sequence doesn't generate elements. When somebody subscribes to a sequence, the sequence 
-	///     calls custom subscribe action (passed via constructor) in order to start receiving elements and pass them to subscribers. All new subscribers will receive "hot" 
-	///     elements, i.e. elements, which are received after subscription. When all subscribers kill their subscripton, the sequece stops generating elements by killing its
-	///     own subscription created by calling custom subscribe methods passed via constructor.
-	/// </remarks>
-	public class OnDemandObservable<TResult> : ObservableBase<TResult>, IDisposable
+    /// <summary>
+    ///     An observable sequence which generates elements if at least one subscriber exists.
+    /// </summary>
+    /// <typeparam name="TResult">
+    ///     The type of the elements in the produced sequence.
+    /// </typeparam>
+    /// <remarks>
+    ///     This is a combination of cold and hot subscription. In iddle state, the sequence doesn't generate elements. When somebody subscribes to a sequence, the sequence 
+    ///     calls custom subscribe action (passed via constructor) in order to start receiving elements and pass them to subscribers. All new subscribers will receive "hot" 
+    ///     elements, i.e. elements, which are received after subscription. When all subscribers kill their subscripton, the sequece stops generating elements by killing its
+    ///     own subscription created by calling custom subscribe methods passed via constructor.
+    /// </remarks>
+    internal class OnDemandObservable<TResult> : ObservableBase<TResult>, IDisposable
 	{
 		#region Fields
 

@@ -1,17 +1,15 @@
-﻿
-namespace SV.UPnPLite.Protocols.UPnP
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using System;
-	using System.Text;
+    using System;
+    using System.Text;
 
-	/// <summary>
-	///     Defines an error that occurred on a UPnP Device.
-	/// </summary>
-	/// <typeparam name="TDevice">
-	///     A concrete type of the <see cref="UPnPDevice"/>.
-	/// </typeparam>
-	public abstract class UPnPDeviceException<TDevice> : Exception where TDevice : UPnPDevice
+    /// <summary>
+    ///     Defines an error that occurred on a UPnP Device.
+    /// </summary>
+    /// <typeparam name="TDevice">
+    ///     A concrete type of the <see cref="UPnPDevice"/>.
+    /// </typeparam>
+    public abstract class UPnPDeviceException<TDevice> : Exception where TDevice : UPnPDevice
 	{
 		#region Constructors
 

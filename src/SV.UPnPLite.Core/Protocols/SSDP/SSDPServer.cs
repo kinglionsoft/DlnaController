@@ -1,23 +1,19 @@
-﻿
-namespace SV.UPnPLite.Protocols.SSDP
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using SV.UPnPLite.Protocols.SSDP.Messages;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Net;
-	using System.Net.NetworkInformation;
-	using System.Net.Sockets;
-	using System.Reactive.Linq;
-	using System.Reactive.Subjects;
-	using System.Text;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.NetworkInformation;
+    using System.Net.Sockets;
+    using System.Reactive.Linq;
+    using System.Reactive.Subjects;
+    using System.Text;
 
-	/// <summary>
-	///     A Desktop implementation of the SSDP protocol.
-	/// </summary>
-	internal class SSDPServer : ISSDPServer, IDisposable
+    /// <summary>
+    ///     A Desktop implementation of the SSDP protocol.
+    /// </summary>
+    internal class SSDPServer : ISSDPServer, IDisposable
 	{
 		#region Constants
 

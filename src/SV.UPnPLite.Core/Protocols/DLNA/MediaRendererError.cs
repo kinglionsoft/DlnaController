@@ -1,5 +1,4 @@
-﻿
-namespace SV.UPnPLite.Protocols.DLNA
+﻿namespace SV.UPnPLite.Core
 {
 
 	/// <summary>

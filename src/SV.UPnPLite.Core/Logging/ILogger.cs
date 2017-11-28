@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Logging
+namespace SV.UPnPLite.Core.Logging
 {
 	using System;
 	using System.Collections.Generic;

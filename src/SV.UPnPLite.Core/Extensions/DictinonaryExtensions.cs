@@ -1,5 +1,5 @@
 ﻿
-namespace SV.UPnPLite.Extensions
+namespace SV.UPnPLite.Core
 {
 	using System;
 	using System.Collections.Generic;
@@ -51,13 +51,11 @@ namespace SV.UPnPLite.Extensions
 			instance.EnsureNotNull("instance");
 			TValue result;
 
-			string value;
-			if (instance.TryGetValue(key, out value))
+		    if (instance.TryGetValue(key, out var value))
 			{
 				if (typeof(TValue) == typeof(int))
 				{
-					int intResult;
-					if (int.TryParse(value, out intResult))
+				    if (int.TryParse(value, out var intResult))
 					{
 						result = (TValue)(object)intResult;
 					}
@@ -68,8 +66,7 @@ namespace SV.UPnPLite.Extensions
 				}
 				else if (typeof(TValue) == typeof(uint))
 				{
-					uint intResult;
-					if (uint.TryParse(value, out intResult))
+				    if (uint.TryParse(value, out var intResult))
 					{
 						result = (TValue)(object)intResult;
 					}
@@ -80,8 +77,7 @@ namespace SV.UPnPLite.Extensions
 				}
 				else if (typeof(TValue) == typeof(Uri))
 				{
-					Uri uriResult;
-					if (Uri.TryCreate(value, UriKind.Absolute, out uriResult))
+				    if (Uri.TryCreate(value, UriKind.Absolute, out var uriResult))
 					{
 						result = (TValue)(object)uriResult;
 					}
@@ -154,9 +150,8 @@ namespace SV.UPnPLite.Extensions
 		{
 			instance.EnsureNotNull("instance");
 			TValue result;
-			string value;
 
-			if (instance.TryGetValue(key, out value))
+		    if (instance.TryGetValue(key, out var value))
 			{
 				if (typeof(TValue) == typeof(int))
 				{

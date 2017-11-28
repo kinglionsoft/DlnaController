@@ -1,15 +1,12 @@
-﻿
-namespace SV.UPnPLite.Protocols.UPnP
+﻿namespace SV.UPnPLite.Core
 {
-	using SV.UPnPLite.Extensions;
-	using SV.UPnPLite.Logging;
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
 
-	/// <summary>    
-	///     Defines members for controlling a UPnP device.
-	/// </summary>
-	public abstract class UPnPDevice
+    /// <summary>    
+    ///     Defines members for controlling a UPnP device.
+    /// </summary>
+    public abstract class UPnPDevice
 	{
 		#region Fields
 

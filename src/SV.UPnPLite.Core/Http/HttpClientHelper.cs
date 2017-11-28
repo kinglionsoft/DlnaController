@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace SV.UPnPLite
+namespace SV.UPnPLite.Core.Http
 {
-    public static class HttpClientHelper
+    internal static class HttpClientHelper
     {
         private static readonly Encoding DefaultEncoding = Encoding.UTF8;
         private const string DefaultContentType = "text/xml";
