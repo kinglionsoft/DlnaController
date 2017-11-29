@@ -182,18 +182,18 @@ namespace SV.UPnPLite.Core
 						// Stop listening for a devices when timeout for responses is expired
 						timerSubscription = Observable.Timer(TimeSpan.FromSeconds(timeForResponse)).Subscribe(s =>
 							{
-								searchClient.Close();
+								searchClient?.Close();
 								observer.OnCompleted();
 							});
 
-						var responses = GetIncommingMessagesSequence(searchClient);
-						responses.Subscribe(message => HandleSearchResponseMessage(message, observer));
+                        var responses = GetIncommingMessagesSequence(searchClient);
+                        responses.Subscribe(message => HandleSearchResponseMessage(message, observer));
 
-						searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
-						searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
-						searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
+                        searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
+                        // searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
+                        // searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
 
-						logger.LogDebug("Sent M-Search request from local endpoint '{0}' to a multicast endpoint '{1}' with search target '{2}'.".F(localEndPoint, multicastEndPoint, searchTarget));
+                        logger.LogDebug("Sent M-Search request from local endpoint '{0}' to a multicast endpoint '{1}' with search target '{2}'.".F(localEndPoint, multicastEndPoint, searchTarget));
 					}
 					catch (SocketException ex)
 					{
@@ -215,14 +215,18 @@ namespace SV.UPnPLite.Core
 
 		private static IObservable<string> GetIncommingMessagesSequence(UdpClient socket)
 		{
-			var searchStream = Observable
-								.Create<UdpReceiveResult>(obs => Observable.FromAsync(socket.ReceiveAsync).Subscribe(obs))
-								.Repeat()
-								.Retry()
-								.Publish()
-								.RefCount();
+            // TODO: optimize, cause high usage of cpu
+            var searchStream = Observable
+                                .Create<UdpReceiveResult>(obs => Observable.FromAsync(socket.ReceiveAsync).Subscribe(obs))
+                                .Repeat()
+                                .Retry()
+                                .Publish()
+                                .RefCount();
 
-			var searchHttpMessages = from receiveResult in searchStream
+            searchStream = Observable.FromAsync(socket.ReceiveAsync);
+
+
+            var searchHttpMessages = from receiveResult in searchStream
 									 select Encoding.UTF8.GetString(receiveResult.Buffer);
 
 			return searchHttpMessages;
@@ -283,26 +287,26 @@ namespace SV.UPnPLite.Core
 
 		private void StartNotificationsListening()
 		{
-			var localEndPoint = new IPEndPoint(IPAddress.Any, 1900);
+            var localEndPoint = new IPEndPoint(IPAddress.Any, 1900);
 
-			try
-			{
-				this.server = new UdpClient();
-				this.server.ExclusiveAddressUse = false;
-				this.server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-				this.server.Client.Bind(localEndPoint);
-				this.server.JoinMulticastGroup(IPAddress.Parse(MulticastAddress));
+            try
+            {
+                this.server = new UdpClient();
+                this.server.ExclusiveAddressUse = false;
+                this.server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                this.server.Client.Bind(localEndPoint);
+                this.server.JoinMulticastGroup(IPAddress.Parse(MulticastAddress));
 
-				var incommingMessages = GetIncommingMessagesSequence(this.server);
-				incommingMessages.Subscribe(message => HandleNotifyMessage(message, this.notifyMessages));
+                var incommingMessages = GetIncommingMessagesSequence(this.server);
+                incommingMessages.Subscribe(message => HandleNotifyMessage(message, this.notifyMessages));
 
-				logger.LogInformation("Started listening for notification messages at {0}".F(localEndPoint));
-			}
-			catch (SocketException ex)
-			{
-				logger.LogError(ex, "Can't bind to a {0} for listening for notification messages".F(localEndPoint));
-			}
-		}
+                logger.LogInformation("Started listening for notification messages at {0}".F(localEndPoint));
+            }
+            catch (SocketException ex)
+            {
+                logger.LogError(ex, "Can't bind to a {0} for listening for notification messages".F(localEndPoint));
+            }
+        }
 
 		#endregion
 	}

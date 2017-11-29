@@ -56,19 +56,19 @@ namespace UPnP.Service
             });
 
 
-            var mediaRenderersDiscovery = new MediaRenderersDiscovery(_loggerFactory);
-            
-            mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
-            {
-                _logger.LogInformation($"Renderer Server found: {e.Device}");
-                this._rendererServers.TryAdd(e.Device.UDN, e.Device);
-            });
+            //var mediaRenderersDiscovery = new MediaRenderersDiscovery(_loggerFactory);
 
-            mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Gone).Subscribe(e =>
-            {
-                _logger.LogInformation($"Renderer Server gone: {e.Device}");
-                this._rendererServers.TryRemove(e.Device.UDN, out var gone);
-            });
+            //mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
+            //{
+            //    _logger.LogInformation($"Renderer Server found: {e.Device}");
+            //    this._rendererServers.TryAdd(e.Device.UDN, e.Device);
+            //});
+
+            //mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Gone).Subscribe(e =>
+            //{
+            //    _logger.LogInformation($"Renderer Server gone: {e.Device}");
+            //    this._rendererServers.TryRemove(e.Device.UDN, out var gone);
+            //});
         }
 
         #region Servers

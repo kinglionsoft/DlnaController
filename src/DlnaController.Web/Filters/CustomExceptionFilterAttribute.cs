@@ -28,7 +28,7 @@ namespace DlnaController.Web.Filters
                 string message = context.Exception.Message;
                 while (innerException != null && deep > 0)
                 {
-                    message += innerException.Message;
+                    message += " -> " + innerException.Message;
                     innerException = innerException.InnerException;
                     deep--;
                 }
