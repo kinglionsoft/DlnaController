@@ -6,16 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UPnP.Service;
+using Microsoft.Extensions.Logging;
 
 namespace DlnaController.Web.Controllers
 {
     public class MediaController: BaseController
     {
         private readonly UpnpManager _upnpManager;
+        private readonly ILogger _logger;
 
-        public MediaController(UpnpManager upnpManager)
+        public MediaController(UpnpManager upnpManager, ILoggerFactory loggerFactory)
         {
             _upnpManager = upnpManager;
+            _logger = loggerFactory.CreateLogger(nameof(MediaController));
         }
 
         public ApiResult<IList<MediaServer>> GetMediaServers()
@@ -50,8 +53,16 @@ namespace DlnaController.Web.Controllers
         [HttpPost]
         public async Task<ApiResult> Play(string rendererUdn, string mediaId, string mediaUdn)
         {
-            await _upnpManager.PlayVideoAsync(rendererUdn, mediaId, mediaUdn);
-            return new ApiResult();
+            try
+            {
+                await _upnpManager.PlayVideoAsync(rendererUdn, mediaId, mediaUdn);
+                return new ApiResult();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"play failed, renderer={rendererUdn}, media server={mediaUdn}, media={mediaId}");
+                return new ApiResult(-500, "播放失败");
+            }
         }
     }
 }

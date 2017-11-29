@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.HttpOverrides;
+using DlnaController.Web.Filters;
 
 namespace DlnaController.Web
 {
@@ -28,9 +29,11 @@ namespace DlnaController.Web
 
             services.AddUPnPManager();
 
+            services.AddScoped<CustomExceptionFilterAttribute>();
+            
             services.AddMvc(mvc =>
                 {
-                   
+                   mvc.Filters.Add(typeof(CustomExceptionFilterAttribute));
                 })
                 .AddJsonOptions(options =>
                 {
@@ -43,16 +46,6 @@ namespace DlnaController.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            // add NLog
-           // loggerFactory.AddNLog();
-            // add NLog.Web
-           // app.AddNLogWeb();
-
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
