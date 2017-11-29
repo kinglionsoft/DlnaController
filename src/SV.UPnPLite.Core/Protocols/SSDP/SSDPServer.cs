@@ -1,17 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace SV.UPnPLite.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Net.NetworkInformation;
-    using System.Net.Sockets;
-    using System.Reactive.Linq;
-    using System.Reactive.Subjects;
-    using System.Text;
-
     /// <summary>
     ///     A Desktop implementation of the SSDP protocol.
     /// </summary>

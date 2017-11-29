@@ -56,19 +56,19 @@ namespace UPnP.Service
             });
 
 
-            //var mediaRenderersDiscovery = new MediaRenderersDiscovery(_loggerFactory);
+            var mediaRenderersDiscovery = new MediaRenderersDiscovery(_loggerFactory);
 
-            //mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
-            //{
-            //    _logger.LogInformation($"Renderer Server found: {e.Device}");
-            //    this._rendererServers.TryAdd(e.Device.UDN, e.Device);
-            //});
+            mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
+            {
+                _logger.LogInformation($"Renderer Server found: {e.Device}");
+                this._rendererServers.TryAdd(e.Device.UDN, e.Device);
+            });
 
-            //mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Gone).Subscribe(e =>
-            //{
-            //    _logger.LogInformation($"Renderer Server gone: {e.Device}");
-            //    this._rendererServers.TryRemove(e.Device.UDN, out var gone);
-            //});
+            mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Gone).Subscribe(e =>
+            {
+                _logger.LogInformation($"Renderer Server gone: {e.Device}");
+                this._rendererServers.TryRemove(e.Device.UDN, out var gone);
+            });
         }
 
         #region Servers
@@ -134,10 +134,6 @@ namespace UPnP.Service
                     var media = videoItems.FirstOrDefault(x => x.Id == mediaId);
                     if (media != null)
                     {
-                        foreach (var item in media.Resources)
-                        {
-                            item.Uri = item.Uri.Replace("127.0.0.1", "192.168.1.10");
-                        }
                         return PlayAsync(renderer, media);
                     }
                 }
