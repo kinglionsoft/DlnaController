@@ -8,6 +8,7 @@ import { MyApp } from './app.component';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { KlCoreModule } from 'kl/core';
+import { MediaModule } from 'kl/media';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { KlCoreModule } from 'kl/core';
       tabsHideOnSubPages: true,
       model: 'ios'
     }),
-    KlCoreModule
+    KlCoreModule,
+    MediaModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

@@ -6,7 +6,15 @@
 
 </ion-header>
 
+<ion-content class="card-background-page">
+  <button ion-button color="secondary" outline (click)="getMediaServers()">{{selectedMediaServer.FriendlyName}}</button>
+  <ion-card *ngFor="let item of videos">
+    <img [src]="item.AlbumArtUri" />
+    <div class="card-title">{{item.Title}}</div>
+    <div class="card-subtitle">{{item.Duration}}</div>
+  </ion-card>
 
-<ion-content padding>
-  <button ion-button (click)="go()">Login</button>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 </ion-content>

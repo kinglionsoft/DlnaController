@@ -2,7 +2,7 @@
 
 namespace SV.UPnPLite.Core
 {
-    public class MediaItemComparer<TMedia>: IEqualityComparer<TMedia> where TMedia: MediaItem
+    public class MediaItemComparer<TMedia> : IEqualityComparer<TMedia> where TMedia : MediaItem
     {
         public bool Equals(TMedia x, TMedia y)
         {
@@ -12,6 +12,7 @@ namespace SV.UPnPLite.Core
 
         public int GetHashCode(TMedia obj)
         {
+            if (!string.IsNullOrEmpty(obj.Title)) return obj.Title.GetHashCode();
             return obj.GetHashCode();
         }
     }

@@ -14,7 +14,7 @@ export class HttpClient {
 
   constructor(private http: Http, private loading: LoadingService) { }
 
-  get<T>(url: string, params?: { [key: string]: string }, showLoading?: boolean): Observable<ApiResult<T>> {
+  get<T>(url: string, params?: { [key: string]: any }, showLoading?: boolean): Observable<ApiResult<T>> {
     return this.request(url + this._formatUrl(params), RequestMethod.Get, null, showLoading);
   }
 
@@ -41,11 +41,11 @@ export class HttpClient {
 
     return this.http.request(request)
       .pipe(
-        map(r => r.json() as ApiResult<T>),
-        finalize(() => {
-          if (showLoading !== false) this.loading.hide();
-        }),
-        catchError(x => this.handleError(x))
+      map(r => r.json() as ApiResult<T>),
+      finalize(() => {
+        if (showLoading !== false) this.loading.hide();
+      }),
+      catchError(x => this.handleError(x))
       );
   }
 
