@@ -7,7 +7,7 @@ namespace SV.UPnPLite.Core
 	/// <summary>
 	///     Defines extension methods for <see cref="IReadOnlyDictionary{TKey,TValue}"/>.
 	/// </summary>
-	public static class DictinonaryExtensions
+	internal static class DictinonaryExtensions
 	{
 		/// <summary>
 		///     Gets a value of type <typeparamref name="TValue"/> associated with <see cref="key"/>.

@@ -15,5 +15,10 @@
 		public Uri Url { get; internal set; }
 
 		#endregion
+
+	    public override string ToString()
+	    {
+	        return Url.ToString();
+	    }
 	}
 }

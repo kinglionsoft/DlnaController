@@ -3,12 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DlnaController.Abstractions\DlnaController.Abstractions.csproj" />
-    <ProjectReference Include="..\DlnaController.Domain\DlnaController.Domain.csproj" />
-    <ProjectReference Include="..\SV.UPnPLite.Core\SV.UPnPLite.Core.csproj" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />

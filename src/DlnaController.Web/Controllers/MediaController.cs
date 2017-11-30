@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UPnP.Service;
 using Microsoft.Extensions.Logging;
+using DlnaController.Domain;
 
 namespace DlnaController.Web.Controllers
 {
@@ -21,14 +22,14 @@ namespace DlnaController.Web.Controllers
             _logger = loggerFactory.CreateLogger(nameof(MediaController));
         }
 
-        public ApiResult<IList<MediaServer>> GetMediaServers()
+        public ApiResult<IList<UpnpServerDto>> GetMediaServers()
         {
-            return new ApiResult<IList<MediaServer>>(_upnpManager.GetOnlineMediaServers());
+            return new ApiResult<IList<UpnpServerDto>>(_upnpManager.GetOnlineMediaServers());
         }
 
-        public ApiResult<IList<MediaRenderer>> GetMediaRenderers()
+        public ApiResult<IList<UpnpServerDto>> GetMediaRenderers()
         {
-            return new ApiResult<IList<MediaRenderer>>(_upnpManager.GetOnlineMediaRenderers());
+            return new ApiResult<IList<UpnpServerDto>>(_upnpManager.GetOnlineMediaRenderers());
         }
 
         /// <summary>
@@ -37,10 +38,10 @@ namespace DlnaController.Web.Controllers
         /// <param name="udn">udn of media server</param>
         /// <param name="cache">weather getting from cache</param>
         /// <returns></returns>
-        public async Task<ApiResult<IEnumerable<VideoItem>>> GetVideos(string udn, bool cache)
+        public async Task<ApiResult<IEnumerable<VideoItemDto>>> GetVideos(string udn, bool cache)
         {
             var videos = await _upnpManager.GetVideosAsync(udn, cache);
-            return new ApiResult<IEnumerable<VideoItem>>(videos);
+            return new ApiResult<IEnumerable<VideoItemDto>>(videos);
         }
 
         /// <summary>

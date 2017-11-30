@@ -51,7 +51,7 @@ namespace SV.UPnPLite.Core
 		/// <summary>
 		///     Gets a time duration of the playback of the resource, at normal speed.
 		/// </summary>
-		public TimeSpan Duration { get; internal set; }
+		public TimeSpan Duration { get; internal set; } = TimeSpan.Zero;
 
 		/// <summary>
 		///     Gets a bitrate in bytes/seconds of the encoding of the resource.

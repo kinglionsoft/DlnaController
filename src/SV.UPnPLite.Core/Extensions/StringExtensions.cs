@@ -3,7 +3,7 @@ namespace SV.UPnPLite.Core
 {
 	using System;
 
-	public static class StringExtensions
+    internal static class StringExtensions
 	{
 		public static string F(this string st, params object[] args)
 		{

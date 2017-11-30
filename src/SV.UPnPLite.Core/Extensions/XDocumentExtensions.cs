@@ -4,7 +4,7 @@ namespace SV.UPnPLite.Core
 	using System.Text;
 	using System.Xml.Linq;
 
-	public static class XDocumentExtensions
+    internal static class XDocumentExtensions
 	{
 		public static string ToStringWithDeclaration(this XDocument document)
 		{

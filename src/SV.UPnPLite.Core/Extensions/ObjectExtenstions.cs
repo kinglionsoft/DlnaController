@@ -3,10 +3,10 @@ namespace SV.UPnPLite.Core
 {
 	using System;
 
-	/// <summary>
-	///     Defines extension methods for <see cref="object"/>.
-	/// </summary>
-	public static class ObjectExtenstions
+    /// <summary>
+    ///     Defines extension methods for <see cref="object"/>.
+    /// </summary>
+    internal static class ObjectExtenstions
 	{
 		/// <summary>
 		///     Throws an <see cref="ArgumentNullException"/> if <paramref name="obj"/> is <c>null</c> or <see cref="string.Empty"/>.

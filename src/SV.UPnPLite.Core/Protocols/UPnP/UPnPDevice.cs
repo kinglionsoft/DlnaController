@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace SV.UPnPLite.Core
 {
@@ -36,7 +37,7 @@ namespace SV.UPnPLite.Core
 
 		    this.UDN = udn;
 		    this.logger = loggerFactory.CreateLogger(this.GetType().Name);
-
+            this.Icons = new DeviceIcon[0];
 		}
 
 		#endregion
@@ -89,6 +90,29 @@ namespace SV.UPnPLite.Core
 			get;
 			set;
 		}
+
+        /// <summary>
+        /// Get the pretty icon
+        /// </summary>
+	    public string Icon
+	    {
+	        get
+	        {
+	            if (Icons.Any())
+	            {
+	                foreach (var type in new[] {"image/png", "image/jpeg"})
+	                {
+	                    var url = Icons.Where(x => x.Type == type).OrderByDescending(x => x.Size.Width).FirstOrDefault()
+	                        ?.Url;
+	                    if (url != null)
+	                    {
+	                        return url.ToString();
+	                    }
+	                }
+	            }
+	            return string.Empty;
+	        }
+	    }
 
 		#endregion
 

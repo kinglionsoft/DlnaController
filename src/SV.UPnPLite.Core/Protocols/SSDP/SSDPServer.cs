@@ -189,8 +189,6 @@ namespace SV.UPnPLite.Core
                         responses.Subscribe(message => HandleSearchResponseMessage(message, observer));
 
                         searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
-                        // searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
-                        // searchClient.SendAsync(buffer, buffer.Length, multicastEndPoint);
 
                         logger.LogDebug("Sent M-Search request from local endpoint '{0}' to a multicast endpoint '{1}' with search target '{2}'.".F(localEndPoint, multicastEndPoint, searchTarget));
 					}
@@ -214,17 +212,15 @@ namespace SV.UPnPLite.Core
 
 		private static IObservable<string> GetIncommingMessagesSequence(UdpClient socket)
 		{
-            // TODO: optimize, cause high usage of cpu
             var searchStream = Observable
-                                .Create<UdpReceiveResult>(obs => Observable.FromAsync(socket.ReceiveAsync).Subscribe(obs))
+                                // cause high usage of cpu
+                                // .Create<UdpReceiveResult>(obs => Observable.FromAsync(socket.ReceiveAsync).Subscribe(obs))
+                                .Create<UdpReceiveResult>(obs => Observable.FromAsync(socket.ReceiveAsync).Subscribe(obs.OnNext))
                                 .Repeat()
                                 .Retry()
                                 .Publish()
                                 .RefCount();
-
-            searchStream = Observable.FromAsync(socket.ReceiveAsync);
-
-
+            
             var searchHttpMessages = from receiveResult in searchStream
 									 select Encoding.UTF8.GetString(receiveResult.Buffer);
 

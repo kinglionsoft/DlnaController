@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DlnaController.Abstractions;
+using DlnaController.Domain;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SV.UPnPLite.Core;
@@ -73,14 +74,16 @@ namespace UPnP.Service
 
         #region Servers
 
-        public IList<MediaServer> GetOnlineMediaServers()
+        public IList<UpnpServerDto> GetOnlineMediaServers()
         {
-            return _mediaServers.Select(x => x.Value).ToList();
+            var servers = _mediaServers.Select(x => x.Value).ToList();
+            return AutoMapper.Mapper.Map<List<UpnpServerDto>>(servers);
         }
 
-        public IList<MediaRenderer> GetOnlineMediaRenderers()
+        public IList<UpnpServerDto> GetOnlineMediaRenderers()
         {
-            return _rendererServers.Select(x => x.Value).ToList();
+            var servers = _rendererServers.Select(x => x.Value).ToList();
+            return AutoMapper.Mapper.Map<List<UpnpServerDto>>(servers);
         }
 
         #endregion
@@ -99,12 +102,13 @@ namespace UPnP.Service
 
             return results;
         }
-        public Task<IEnumerable<VideoItem>> GetVideosAsync(MediaServer mediaServer, bool cacheFirst = true)
+        public async Task<IEnumerable<VideoItemDto>> GetVideosAsync(MediaServer mediaServer, bool cacheFirst = true)
         {
-            return GetMediasAsync<VideoItem>(mediaServer, cacheFirst);
+            var videos =await GetMediasAsync<VideoItem>(mediaServer, cacheFirst);
+            return AutoMapper.Mapper.Map<IEnumerable<VideoItemDto>>(videos);
         }
 
-        public Task<IEnumerable<VideoItem>> GetVideosAsync(string mediaServerUDN, bool cacheFirst = true)
+        public Task<IEnumerable<VideoItemDto>> GetVideosAsync(string mediaServerUDN, bool cacheFirst = true)
         {
             if(_mediaServers.TryGetValue(mediaServerUDN, out var server))
             {

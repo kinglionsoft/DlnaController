@@ -3,10 +3,10 @@ namespace SV.UPnPLite.Core
 {
 	using System.Xml.Linq;
 
-	/// <summary>
-	///     Defines extension methods for <see cref="XElement"/>.
-	/// </summary>
-	public static class XElementExtensions
+    /// <summary>
+    ///     Defines extension methods for <see cref="XElement"/>.
+    /// </summary>
+    internal static class XElementExtensions
 	{
 		/// <summary>
 		///     Returns a value of the <paramref name="element"/>.

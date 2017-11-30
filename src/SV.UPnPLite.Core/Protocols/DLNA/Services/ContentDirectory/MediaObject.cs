@@ -93,9 +93,9 @@ namespace SV.UPnPLite.Core
 		/// <summary>
 		///     Gets resources associated with media object.
 		/// </summary>
-		public IEnumerable<MediaResource> Resources { get { return this.resources; } }
+		public IEnumerable<MediaResource> Resources => this.resources;
 
-		/// <summary>
+	    /// <summary>
 		///     Gets a UPnP class of the media object.
 		/// </summary>
 		public string Class

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DlnaController.Abstractions\DlnaController.Abstractions.csproj" />
+    <ProjectReference Include="..\DlnaController.Domain\DlnaController.Domain.csproj" />
     <ProjectReference Include="..\SV.UPnPLite.Core\SV.UPnPLite.Core.csproj" />
     <ProjectReference Include="..\UPnP.Service\UPnP.Service.csproj" />
   </ItemGroup>

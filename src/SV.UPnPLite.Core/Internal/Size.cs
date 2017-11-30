@@ -30,5 +30,10 @@ namespace SV.UPnPLite.Core
 		///     Gets or sets the vertical component of this <see cref="Size"/> structure.
 		/// </summary>
 		public int Height;
+
+	    public override string ToString()
+	    {
+	        return $"{Width}x{Height}";
+	    }
 	}
 }
