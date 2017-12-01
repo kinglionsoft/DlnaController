@@ -25,7 +25,13 @@ export class HomePage {
   ) {
     this.videos = [];
     this.mediaServers = [];
-    this.selectedMediaServer = new UpnpServer();
+    this.selectedMediaServer = this.service.getDefaulMediaServer();
+  }
+
+  ionViewDidLoad() {
+    if (this.selectedMediaServer.UDN !== '') {
+      this.getVidoes(true);
+    }
   }
 
   doRefresh(refresher) {
@@ -56,6 +62,7 @@ export class HomePage {
   selectMediaServer(server: UpnpServer) {
     if (this.selectedMediaServer.UDN === server.UDN) return;
     this.selectedMediaServer = server;
+    this.service.saveDefaulMediaServer(server);
     this.getVidoes(true);
   }
 
@@ -73,7 +80,26 @@ export class HomePage {
       }, x => this.messageBox.toast(x));
   }
 
-  presentActionSheet() {
+  play(media: Video) {
+    let renderer = this.service.getDefaulRendererServer();
+    if (renderer.UDN === '') {
+      this.messageBox.toast('请设置播放设备');
+      return;
+    }
+    this.messageBox.confirm(`将【${media.Title}】发送到【${renderer.FriendlyName}】播放？`)
+      .then(() => {
+        this.service.play(renderer.UDN, media.Id, this.selectedMediaServer.UDN)
+          .subscribe(r => {
+            if (r.Code < 0) {
+              this.messageBox.alert(r.Message);
+            } else {
+              this.messageBox.toast('发送成功');
+            }
+          }, x => this.messageBox.alert(x));
+      });
+  }
+
+  private presentActionSheet() {
     let buttons = [];
     this.mediaServers.forEach(element => {
       buttons.push({

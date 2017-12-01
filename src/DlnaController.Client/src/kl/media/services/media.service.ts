@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from 'kl/core';
+import { HttpClient, StorageService } from 'kl/core';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators/map';
 import { of } from 'rxjs/Observable/of';
@@ -9,7 +9,7 @@ import { ApiResult } from 'kl/model';
 @Injectable()
 export class MediaService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private storage: StorageService) { }
 
     private _mediaServers: UpnpServer[];
     /**
@@ -66,6 +66,36 @@ export class MediaService {
         return this.http.get<Video[]>('/api/media/GetVideos', {
             udn: udn,
             cache: cache
+        });
+    }
+
+    saveDefaulMediaServer(server: UpnpServer) {
+        this.storage.set('_default_m_svr', server);
+    }
+
+    getDefaulMediaServer() {
+        return this.storage.get<UpnpServer>('_default_m_svr') || new UpnpServer();
+    }
+
+    saveDefaulRendererServer(server: UpnpServer) {
+        this.storage.set('_default_r_svr', server);
+    }
+
+    getDefaulRendererServer() {
+        return this.storage.get<UpnpServer>('_default_r_svr') || new UpnpServer();
+    }
+
+    /**
+     * 播放视频
+     * @param rendererUdn
+     * @param mediaId
+     * @param mediaUdn
+     */
+    play(rendererUdn: string, mediaId: string, mediaUdn: string) {
+        return this.http.post<ApiResult<any>>('/api/media/play', null, {
+            rendererUdn: rendererUdn,
+            mediaId: mediaId,
+            mediaUdn: mediaUdn
         });
     }
 }

@@ -14,7 +14,7 @@ using SV.UPnPLite.Core;
 
 namespace UPnP.Service
 {
-    public sealed class UpnpManager: IDisposable
+    public sealed class UpnpManager : IDisposable
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IMemoryCache _cache;
@@ -89,8 +89,8 @@ namespace UPnP.Service
         #endregion
 
         #region Medias
-        
-        public async Task<IEnumerable<TMedia>> GetMediasAsync<TMedia>(MediaServer mediaServer, bool cacheFirst = true) where TMedia: MediaItem
+
+        public async Task<IEnumerable<TMedia>> GetMediasAsync<TMedia>(MediaServer mediaServer, bool cacheFirst = true) where TMedia : MediaItem
         {
             var key = AppConstants.GetMediasCacheKey(typeof(TMedia).Name, mediaServer.UDN);
 
@@ -104,13 +104,13 @@ namespace UPnP.Service
         }
         public async Task<IEnumerable<VideoItemDto>> GetVideosAsync(MediaServer mediaServer, bool cacheFirst = true)
         {
-            var videos =await GetMediasAsync<VideoItem>(mediaServer, cacheFirst);
+            var videos = await GetMediasAsync<VideoItem>(mediaServer, cacheFirst);
             return AutoMapper.Mapper.Map<IEnumerable<VideoItemDto>>(videos);
         }
 
         public Task<IEnumerable<VideoItemDto>> GetVideosAsync(string mediaServerUDN, bool cacheFirst = true)
         {
-            if(_mediaServers.TryGetValue(mediaServerUDN, out var server))
+            if (_mediaServers.TryGetValue(mediaServerUDN, out var server))
             {
                 return GetVideosAsync(server, cacheFirst);
             }
@@ -121,7 +121,7 @@ namespace UPnP.Service
         #endregion
 
         #region Remote Control
-        
+
         public async Task PlayAsync(MediaRenderer renderer, MediaItem media)
         {
             await renderer.OpenAsync(media);
@@ -133,7 +133,7 @@ namespace UPnP.Service
             if (_rendererServers.TryGetValue(rendererUDN, out var renderer))
             {
                 var key = AppConstants.GetMediasCacheKey(nameof(VideoItem), mediaServerUDN);
-                if(_cache.TryGetValue<IEnumerable<VideoItem>>(key, out var videoItems))
+                if (_cache.TryGetValue<IEnumerable<VideoItem>>(key, out var videoItems))
                 {
                     var media = videoItems.FirstOrDefault(x => x.Id == mediaId);
                     if (media != null)

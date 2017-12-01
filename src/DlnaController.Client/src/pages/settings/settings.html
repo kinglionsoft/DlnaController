@@ -8,5 +8,12 @@
 
 
 <ion-content padding>
-
+  <ion-list>
+    <ion-list-header>
+      媒体播放器
+    </ion-list-header>
+    <button ion-item (click)="go('renderer')">
+      {{renderer.FriendlyName}}
+    </button>
+  </ion-list>
 </ion-content>

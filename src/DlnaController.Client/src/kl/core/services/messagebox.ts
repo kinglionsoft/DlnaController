@@ -41,28 +41,28 @@ export class MessageBox {
      */
     confirm(
         msg: string,
-        onOk: () => void,
-        onCancel = () => { },
         okText = '确定',
-        cancelText = ''
-    ) {
-        let options: AlertOptions = {
-            title: '',
-            message: msg,
-            buttons: [
-                {
-                    text: cancelText,
-                    role: 'cancel',
-                    handler: onCancel
-                },
-                {
-                    text: okText,
-                    role: 'ok',
-                    handler: onOk
-                }
-            ]
-        };
-        this._present(options);
+        cancelText = '取消'
+    ): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let options: AlertOptions = {
+                title: '',
+                message: msg,
+                buttons: [
+                    {
+                        text: cancelText,
+                        role: 'cancel',
+                        handler: () => { }
+                    },
+                    {
+                        text: okText,
+                        role: 'ok',
+                        handler: () => resolve()
+                    }
+                ]
+            };
+            this._present(options);
+        });
     }
 
     /**

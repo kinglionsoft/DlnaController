@@ -6,7 +6,7 @@ import { LoadingService } from './services/loading.service';
 import { MessageBox } from './services/messagebox';
 import { PlatformService } from './services/platform.service';
 import { AuthService } from './services/auth.service';
-
+import { StorageService } from './services/storage.service';
 
 @NgModule({
   imports: [
@@ -20,7 +20,8 @@ import { AuthService } from './services/auth.service';
     HttpClient,
     MessageBox,
     PlatformService,
-    AuthService
+    AuthService,
+    StorageService
   ]
 })
 export class KlCoreModule { }

@@ -1,0 +1,16 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>在线媒体播放器</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let item of renderers" tappable (click)="select(item)">
+      {{item.FriendlyName}}
+      <ion-icon name="checkmark-circle" [isActive]="item.UDN==defaultRenderer.UDN" item-end color="secondary"></ion-icon>
+    </ion-item>
+  </ion-list>
+</ion-content>

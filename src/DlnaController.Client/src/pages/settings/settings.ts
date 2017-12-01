@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { UpnpServer, MediaService } from 'kl/media';
 
 @IonicPage({
   name: 'settings'
@@ -10,11 +11,25 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SettingsPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+
+  renderer: UpnpServer;
+
+  constructor(public navCtrl: NavController,
+    public navParams: NavParams,
+    private service: MediaService,
+    event: Events
+  ) {
+    this.renderer = this.service.getDefaulRendererServer();
+    event.subscribe('settings-update', () => {
+      this.ionViewDidLoad();
+    });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SettingsPage');
+  ionViewDidLoad(): void {
+    this.renderer = this.service.getDefaulRendererServer();
   }
 
+  go(page) {
+    this.navCtrl.push(page);
+  }
 }

@@ -11,4 +11,8 @@ export class UpnpServer {
         this.FriendlyName = '点击获取设备';
         this.Icon = '';
     }
+
+    empty() {
+        return this.UDN === '';
+    }
 }

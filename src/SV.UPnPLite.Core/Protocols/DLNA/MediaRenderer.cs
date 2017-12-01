@@ -14,33 +14,33 @@ namespace SV.UPnPLite.Core
     ///     A device which renders content from Media Server.
     /// </summary>
     public class MediaRenderer : UPnPDevice
-	{
-		#region Fields
+    {
+        #region Fields
 
-		private readonly IAvTransportService avTransportService;
+        private readonly IAvTransportService avTransportService;
 
-		private readonly static Dictionary<string, MediaRendererState> statesMapper = new Dictionary<string, MediaRendererState>(StringComparer.OrdinalIgnoreCase)
+        private readonly static Dictionary<string, MediaRendererState> statesMapper = new Dictionary<string, MediaRendererState>(StringComparer.OrdinalIgnoreCase)
                 {
                     { TransportState.NoMediaPresent, MediaRendererState.NoMediaPresent },
                     { TransportState.PausedPlayback, MediaRendererState.Paused },
                     { TransportState.Playing, MediaRendererState.Playing },
                     { TransportState.Stopped, MediaRendererState.Stopped },
-                    { TransportState.Transitioning, MediaRendererState.Buffering } 
+                    { TransportState.Transitioning, MediaRendererState.Buffering }
                 };
 
-		private OnDemandObservable<MediaRendererState> stateChangesObservableSequence;
+        private OnDemandObservable<MediaRendererState> stateChangesObservableSequence;
 
-		private OnDemandObservable<TimeSpan> positionChangesObservableSequence;
+        private OnDemandObservable<TimeSpan> positionChangesObservableSequence;
 
-		private MediaRendererState currentState;
+        private MediaRendererState currentState;
 
-		private TimeSpan currentPosition;
+        private TimeSpan currentPosition;
 
-		#endregion
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MediaRenderer"/> class.
         /// </summary>
@@ -59,386 +59,388 @@ namespace SV.UPnPLite.Core
         ///     <paramref name="logManager"/> is <c>null</c>.
         /// </exception>
         public MediaRenderer(string udn, IAvTransportService avTransportService, ILoggerFactory loggerFactory)
-			: base(udn, loggerFactory)
-		{
-			avTransportService.EnsureNotNull("avTransportService");
+            : base(udn, loggerFactory)
+        {
+            avTransportService.EnsureNotNull("avTransportService");
 
-			this.avTransportService = avTransportService;
+            this.avTransportService = avTransportService;
 
-			this.Initialize();
-		}
+            this.Initialize();
+        }
 
-		#endregion
+        #endregion
 
-		#region Events
+        #region Events
 
-		/// <summary>
-		///     Gets an observable sequence which notifies about renderer state changes.
-		/// </summary>
-		public IObservable<MediaRendererState> StateChanges
-		{
-			get
-			{
-				return this.stateChangesObservableSequence;
-			}
-		}
+        /// <summary>
+        ///     Gets an observable sequence which notifies about renderer state changes.
+        /// </summary>
+        public IObservable<MediaRendererState> StateChanges
+        {
+            get
+            {
+                return this.stateChangesObservableSequence;
+            }
+        }
 
-		/// <summary>
-		///     Gets an observable sequence which notifies about current playback position changes.
-		/// </summary>
-		public IObservable<TimeSpan> PositionChanges
-		{
-			get
-			{
-				return this.positionChangesObservableSequence;
-			}
-		}
+        /// <summary>
+        ///     Gets an observable sequence which notifies about current playback position changes.
+        /// </summary>
+        public IObservable<TimeSpan> PositionChanges
+        {
+            get
+            {
+                return this.positionChangesObservableSequence;
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Methods
+        #region Methods
 
-		/// <summary>
-		///     Prepares the <paramref name="item"/> for playback on renderer.
-		/// </summary>
-		/// <param name="item">
-		///     An item to play on renderer.
-		/// </param>
-		/// <returns>
-		///     An <see cref="Task"/> instance which notifies about completion the async operation.
-		/// </returns>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="item"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task OpenAsync(MediaItem item)
-		{
-			item.EnsureNotNull("item");
+        /// <summary>
+        ///     Prepares the <paramref name="item"/> for playback on renderer.
+        /// </summary>
+        /// <param name="item">
+        ///     An item to play on renderer.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="Task"/> instance which notifies about completion the async operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="item"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task OpenAsync(MediaItem item)
+        {
+            item.EnsureNotNull("item");
 
-			var resource = this.SelectResourceForPlayback(item);
+            var resource = this.SelectResourceForPlayback(item);
 
-			try
-			{
-				await this.avTransportService.SetAvTransportURIAsync(0, resource.Uri, resource.Metadata);
-			}
-			catch (FormatException ex)
-			{
-				throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when opening '{0}'".F(resource.Uri), ex);
-			}
-		}
+            resource.Uri = resource.Uri.Replace("127.0.0.1", "192.168.1.100");
+            resource.Metadata = resource.Metadata.Replace("127.0.0.1", "192.168.1.100");
 
-		/// <summary>
-		///     Prepares the <paramref name="resource"/> for playback on the renderer.
-		/// </summary>
-		/// <param name="resource">
-		///     A resource to play on the renderer.
-		/// </param>
-		/// <returns>
-		///     An <see cref="Task"/> instance which notifies about completion the async operation.
-		/// </returns>
-		/// <exception cref="ArgumentNullException">
-		///     <paramref name="item"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task OpenAsync(MediaResource resource)
-		{
-			resource.EnsureNotNull("resource");
-			
-			try
-			{
-				await this.avTransportService.SetAvTransportURIAsync(0, resource.Uri, resource.Metadata);
-			}
-			catch (FormatException ex)
-			{
-				throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when opening '{0}'".F(resource.Uri), ex);
-			}
-		}
+            try
+            {
+                await this.avTransportService.SetAvTransportURIAsync(0, resource.Uri, resource.Metadata);
+            }
+            catch (FormatException ex)
+            {
+                throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when opening '{0}'".F(resource.Uri), ex);
+            }
+        }
 
-		/// <summary>
-		///     Requests the renderer to start playback.
-		/// </summary>
-		/// <returns>
-		///     An <see cref="Task"/> instance which notifies about completion the async operation.
-		/// </returns>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task PlayAsync()
-		{
-			try
-			{
-				await this.avTransportService.PlayAsync(0, "1");
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting play current media", ex);
-			}
-		}
+        /// <summary>
+        ///     Prepares the <paramref name="resource"/> for playback on the renderer.
+        /// </summary>
+        /// <param name="resource">
+        ///     A resource to play on the renderer.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="Task"/> instance which notifies about completion the async operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="item"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task OpenAsync(MediaResource resource)
+        {
+            resource.EnsureNotNull("resource");
 
-		/// <summary>
-		///     Requests the renderer to stop playback.
-		/// </summary>
-		/// <returns>
-		///     An <see cref="Task"/> instance which notifies about completion the async operation.
-		/// </returns>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task StopAsync()
-		{
-			try
-			{
-				await this.avTransportService.StopAsync(0);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting stop current media", ex);
-			}
-		}
+            try
+            {
+                await this.avTransportService.SetAvTransportURIAsync(0, resource.Uri, resource.Metadata);
+            }
+            catch (FormatException ex)
+            {
+                throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when opening '{0}'".F(resource.Uri), ex);
+            }
+        }
 
-		/// <summary>
-		///     Requests the renderer to pause playback.
-		/// </summary>
-		/// <returns>
-		///     An <see cref="Task"/> instance which notifies about completion the async operation.
-		/// </returns>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task PauseAsync()
-		{
-			try
-			{
-				await this.avTransportService.PauseAsync(0);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting pause current media", ex);
-			}
-		}
+        /// <summary>
+        ///     Requests the renderer to start playback.
+        /// </summary>
+        /// <returns>
+        ///     An <see cref="Task"/> instance which notifies about completion the async operation.
+        /// </returns>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task PlayAsync()
+        {
+            try
+            {
+                await this.avTransportService.PlayAsync(0, "1");
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting play current media", ex);
+            }
+        }
 
-		/// <summary>
-		///     Requests current playback position.
-		/// </summary>
-		/// <returns>
-		///     The current position in terms of time, from the beginning of the current track.
-		/// </returns>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task<TimeSpan> GetCurrentPositionAsync()
-		{
-			try
-			{
-				var info = await this.avTransportService.GetPositionInfoAsync(0);
+        /// <summary>
+        ///     Requests the renderer to stop playback.
+        /// </summary>
+        /// <returns>
+        ///     An <see cref="Task"/> instance which notifies about completion the async operation.
+        /// </returns>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task StopAsync()
+        {
+            try
+            {
+                await this.avTransportService.StopAsync(0);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting stop current media", ex);
+            }
+        }
 
-				return info.RelativeTimePosition;
-			}
-			catch (FormatException ex)
-			{
-				throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting current position", ex);
-			}
-		}
+        /// <summary>
+        ///     Requests the renderer to pause playback.
+        /// </summary>
+        /// <returns>
+        ///     An <see cref="Task"/> instance which notifies about completion the async operation.
+        /// </returns>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task PauseAsync()
+        {
+            try
+            {
+                await this.avTransportService.PauseAsync(0);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting pause current media", ex);
+            }
+        }
 
-		/// <summary>
-		///     Requests current playback state.
-		/// </summary>
-		/// <returns>
-		///     The conceptually top-level state of the MediaRenderer.
-		/// </returns>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task<MediaRendererState> GetCurrentStateAsyncTask()
-		{
-			try
-			{
-				var stateInfo = await this.avTransportService.GetTransportInfoAsync(0);
+        /// <summary>
+        ///     Requests current playback position.
+        /// </summary>
+        /// <returns>
+        ///     The current position in terms of time, from the beginning of the current track.
+        /// </returns>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task<TimeSpan> GetCurrentPositionAsync()
+        {
+            try
+            {
+                var info = await this.avTransportService.GetPositionInfoAsync(0);
 
-				return ParseTransportState(stateInfo.State);
-			}
-			catch (FormatException ex)
-			{
-				throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting current state", ex);
-			}
-		}
+                return info.RelativeTimePosition;
+            }
+            catch (FormatException ex)
+            {
+                throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting current position", ex);
+            }
+        }
 
-		/// <summary>
-		///     Requests an information about current media info.
-		/// </summary>
-		/// <returns>
-		///     An information about the media being played.
-		/// </returns>
-		/// <exception cref="WebException">
-		///     An error occurred when sending request to service.
-		/// </exception>
-		/// <exception cref="MediaRendererException">
-		///     An unexpected error occurred when executing request on device.
-		/// </exception>
-		public async Task<RendererMediaInfo> GetMediaInfoAsync()
-		{
-			try
-			{
-				var mediaInfo = await this.avTransportService.GetMediaInfoAsync(0);
+        /// <summary>
+        ///     Requests current playback state.
+        /// </summary>
+        /// <returns>
+        ///     The conceptually top-level state of the MediaRenderer.
+        /// </returns>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task<MediaRendererState> GetCurrentStateAsyncTask()
+        {
+            try
+            {
+                var stateInfo = await this.avTransportService.GetTransportInfoAsync(0);
 
-				return mediaInfo;
-			}
-			catch (FormatException ex)
-			{
-				throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
-			}
-			catch (UPnPServiceException ex)
-			{
-				throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting current state", ex);
-			}
-		}
+                return ParseTransportState(stateInfo.State);
+            }
+            catch (FormatException ex)
+            {
+                throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting current state", ex);
+            }
+        }
 
-		private MediaRendererState ParseTransportState(string transportState)
-		{
-			MediaRendererState result;
+        /// <summary>
+        ///     Requests an information about current media info.
+        /// </summary>
+        /// <returns>
+        ///     An information about the media being played.
+        /// </returns>
+        /// <exception cref="WebException">
+        ///     An error occurred when sending request to service.
+        /// </exception>
+        /// <exception cref="MediaRendererException">
+        ///     An unexpected error occurred when executing request on device.
+        /// </exception>
+        public async Task<RendererMediaInfo> GetMediaInfoAsync()
+        {
+            try
+            {
+                var mediaInfo = await this.avTransportService.GetMediaInfoAsync(0);
 
-			if (statesMapper.TryGetValue(transportState, out result) == false)
-			{
-				result = MediaRendererState.Stopped;
+                return mediaInfo;
+            }
+            catch (FormatException ex)
+            {
+                throw new MediaRendererException(this, MediaRendererError.UnexpectedError, "Received result is in a bad format", ex);
+            }
+            catch (UPnPServiceException ex)
+            {
+                throw new MediaRendererException(this, ex.ErrorCode.ToMediaRendererError(), "An error occurred when requesting current state", ex);
+            }
+        }
 
-				this.logger.LogWarning("An unexpected transport state received", "Renderer".As(this.FriendlyName), "State".As(transportState));
-			}
+        private MediaRendererState ParseTransportState(string transportState)
+        {
+            MediaRendererState result;
 
-			return result;
-		}
+            if (statesMapper.TryGetValue(transportState, out result) == false)
+            {
+                result = MediaRendererState.Stopped;
 
-		private void Initialize()
-		{
-            
-			this.positionChangesObservableSequence = new OnDemandObservable<TimeSpan>(o =>
-			{
-				var subscription = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Subscribe(
-					async _ =>
-					{
-						try
-						{
-							var positionInfo = await this.avTransportService.GetPositionInfoAsync(0);
+                this.logger.LogWarning("An unexpected transport state received", "Renderer".As(this.FriendlyName), "State".As(transportState));
+            }
 
-							if (this.currentPosition != positionInfo.RelativeTimePosition)
-							{
-								this.currentPosition = positionInfo.RelativeTimePosition;
-								o.OnNext(positionInfo.RelativeTimePosition);
-							}
-						}
-						catch (WebException ex)
-						{
-							this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
-						}
-						catch (FormatException ex)
-						{
-							this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
-						}
-						catch (UPnPServiceException ex)
-						{
-							this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
-						}
-					});
+            return result;
+        }
 
-				return subscription.Dispose;
-			});
+        private void Initialize()
+        {
 
-			this.stateChangesObservableSequence = new OnDemandObservable<MediaRendererState>(o =>
-			{
-				var subscription = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Subscribe(
-					async _ =>
-					{
-						try
-						{
-							var info = await this.avTransportService.GetTransportInfoAsync(0);
-							var state = ParseTransportState(info.State);
+            this.positionChangesObservableSequence = new OnDemandObservable<TimeSpan>(o =>
+            {
+                var subscription = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Subscribe(
+                    async _ =>
+                    {
+                        try
+                        {
+                            var positionInfo = await this.avTransportService.GetPositionInfoAsync(0);
 
-							if (this.currentState != state)
-							{
-								this.currentState = state;
-								o.OnNext(ParseTransportState(info.State));
-							}
-						}
-						catch (WebException ex)
-						{
-							this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
-						}
-						catch (FormatException ex)
-						{
-							this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
-						}
-						catch (UPnPServiceException ex)
-						{
-							this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
-						}
-					});
+                            if (this.currentPosition != positionInfo.RelativeTimePosition)
+                            {
+                                this.currentPosition = positionInfo.RelativeTimePosition;
+                                o.OnNext(positionInfo.RelativeTimePosition);
+                            }
+                        }
+                        catch (WebException ex)
+                        {
+                            this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
+                        }
+                        catch (FormatException ex)
+                        {
+                            this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
+                        }
+                        catch (UPnPServiceException ex)
+                        {
+                            this.logger.LogWarning(ex, "An error occurred when requesting position info", "Renderer".As(this.FriendlyName));
+                        }
+                    });
 
-				return subscription.Dispose;
-			});
+                return subscription.Dispose;
+            });
+
+            this.stateChangesObservableSequence = new OnDemandObservable<MediaRendererState>(o =>
+            {
+                var subscription = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Subscribe(
+                    async _ =>
+                    {
+                        try
+                        {
+                            var info = await this.avTransportService.GetTransportInfoAsync(0);
+                            var state = ParseTransportState(info.State);
+
+                            if (this.currentState != state)
+                            {
+                                this.currentState = state;
+                                o.OnNext(ParseTransportState(info.State));
+                            }
+                        }
+                        catch (WebException ex)
+                        {
+                            this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
+                        }
+                        catch (FormatException ex)
+                        {
+                            this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
+                        }
+                        catch (UPnPServiceException ex)
+                        {
+                            this.logger.LogWarning(ex, "An error occurred when requesting state info", "Renderer".As(this.FriendlyName));
+                        }
+                    });
+
+                return subscription.Dispose;
+            });
             //*/
-		}
+        }
 
-		private MediaResource SelectResourceForPlayback(MediaItem mediaItem)
-		{
-			var resource = mediaItem.Resources.First();
+        private MediaResource SelectResourceForPlayback(MediaItem mediaItem)
+        {
+            var resource = mediaItem.Resources.First();
 
-			var imageItem = mediaItem as ImageItem;
-			if (imageItem != null)
-			{
-				var maxWidth = 0.0;
-				foreach (var mediaResource in imageItem.Resources)
-				{
-					if (mediaResource.Resolution.Width > maxWidth)
-					{
-						maxWidth = mediaResource.Resolution.Width;
-						resource = mediaResource;
-					}
-				}
-			}
+            if (mediaItem is ImageItem imageItem)
+            {
+                var maxWidth = 0.0;
+                foreach (var mediaResource in imageItem.Resources)
+                {
+                    if (mediaResource.Resolution.Width > maxWidth)
+                    {
+                        maxWidth = mediaResource.Resolution.Width;
+                        resource = mediaResource;
+                    }
+                }
+            }
 
-			return resource;
-		}
+            return resource;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

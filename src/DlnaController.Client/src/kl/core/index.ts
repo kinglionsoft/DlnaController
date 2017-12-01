@@ -5,3 +5,4 @@ export * from './services/httpclient';
 export * from './services/messagebox';
 export * from './services/platform.service';
 export * from './services/auth.service';
+export * from './services/storage.service';
