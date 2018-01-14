@@ -22,9 +22,10 @@ namespace SV.UPnPLite.Core
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="loggerFactory"/> is <c>null</c>.
         /// </exception>
-        public MediaServersDiscovery(ILoggerFactory loggerFactory)
-			: base("urn:schemas-upnp-org:device:MediaServer:1", loggerFactory)
+        public MediaServersDiscovery(ILoggerFactory loggerFactory, string[] localIps = null)
+			: base("urn:schemas-upnp-org:device:MediaServer:1", loggerFactory, localIps)
 		{
+            logger.LogInformation(localIps[0]);
 		}
 
 		#endregion

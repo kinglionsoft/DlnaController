@@ -46,6 +46,8 @@ namespace SV.UPnPLite.Core
 
 		private bool isDisposed;
 
+        private readonly string[] _localIps;
+
         #endregion
 
         #region Constructors
@@ -56,10 +58,12 @@ namespace SV.UPnPLite.Core
         /// <param name="logManager">
         ///     The <see cref="ILoggerFactory"/> to use for logging the debug information
         /// </param>
-        private SSDPServer(ILoggerFactory logManager)
+        private SSDPServer(ILoggerFactory logManager, string[] localIps)
 		{
 		    logger = logManager.CreateLogger(nameof(SSDPServer));
-		    this.StartNotificationsListening();
+            _localIps = localIps;
+
+            this.StartNotificationsListening();
         }
 
         #endregion
@@ -87,18 +91,30 @@ namespace SV.UPnPLite.Core
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="logManager"/> is <c>null</c>.
         /// </exception>
-        public static ISSDPServer GetInstance(ILoggerFactory loggerFactory)
+        public static ISSDPServer GetInstance(ILoggerFactory loggerFactory, string[] localIps = null)
 		{
 			lock (instanceSyncObject)
 			{
 				if (instance == null)
 				{
-					instance = new SSDPServer(loggerFactory);
+					instance = new SSDPServer(loggerFactory, localIps);
 				}
 			}
 
 			return instance;
 		}
+
+        private IEnumerable<IPEndPoint> GetLocalEndPoints()
+        {
+            if(_localIps == null)
+            {
+                return GetLocalAddresses()
+                        .Where(a => a.AddressFamily == AddressFamily.InterNetwork)
+                        .Select(a => new IPEndPoint(a, 0));
+            }
+
+            return _localIps.Select(a => new IPEndPoint(IPAddress.Parse(a), 0));
+        }
 
 		/// <summary>
 		///     Searches for an available devices of specified type.
@@ -119,11 +135,9 @@ namespace SV.UPnPLite.Core
 				{
 					var clients = new List<IDisposable>();
 
-					var ipV4LocalEndpoints = GetLocalAddresses()
-						.Where(a => a.AddressFamily == AddressFamily.InterNetwork)
-						.Select(a => new IPEndPoint(a, 0));
+                    var ipV4LocalEndpoints = GetLocalEndPoints();
 
-					foreach (var localEndPoint in ipV4LocalEndpoints)
+                    foreach (var localEndPoint in ipV4LocalEndpoints)
 					{
 						var responses = Search(localEndPoint, searchTarget, timeForResponse);
 						var subscription = responses.Subscribe(observer);

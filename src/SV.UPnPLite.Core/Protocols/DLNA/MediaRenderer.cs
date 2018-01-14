@@ -122,9 +122,6 @@ namespace SV.UPnPLite.Core
 
             var resource = this.SelectResourceForPlayback(item);
 
-            resource.Uri = resource.Uri.Replace("127.0.0.1", "192.168.1.100");
-            resource.Metadata = resource.Metadata.Replace("127.0.0.1", "192.168.1.100");
-
             try
             {
                 await this.avTransportService.SetAvTransportURIAsync(0, resource.Uri, resource.Metadata);

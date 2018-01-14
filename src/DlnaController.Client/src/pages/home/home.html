@@ -9,7 +9,7 @@
 <ion-content class="card-background-page">
   <button ion-button color="secondary" outline (click)="getMediaServers()">{{selectedMediaServer.FriendlyName}}</button>
   <ion-card *ngFor="let item of videos" tappable (click)="play(item)">
-    <img [src]="item.AlbumArtUri" />
+    <img [src]="item.AlbumArtUri || 'assets/empty.png'" />
     <div class="card-title">{{item.Title}}</div>
     <div class="card-subtitle">{{item.Duration}}</div>
   </ion-card>

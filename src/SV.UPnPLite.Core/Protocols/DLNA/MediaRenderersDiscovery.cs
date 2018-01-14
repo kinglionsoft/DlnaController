@@ -22,8 +22,8 @@ namespace SV.UPnPLite.Core
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="logManager"/> is <c>null</c>.
         /// </exception>
-        public MediaRenderersDiscovery(ILoggerFactory loggerFactory)
-			: base("urn:schemas-upnp-org:device:MediaRenderer:1", loggerFactory)
+        public MediaRenderersDiscovery(ILoggerFactory loggerFactory, string[] localIps = null)
+			: base("urn:schemas-upnp-org:device:MediaRenderer:1", loggerFactory, localIps)
 		{
 		}
 

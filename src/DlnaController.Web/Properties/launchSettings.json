@@ -17,11 +17,12 @@
     },
     "DlnaController.Web": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "ASPNETCORE_URL": "http://*:5000"
       },
-      "applicationUrl": "http://localhost:5000/"
+      "applicationUrl": "http://192.168.1.3:5000/"
     }
   }
 }

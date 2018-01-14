@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DlnaController.Abstractions;
 using DlnaController.Domain;
+using DlnaController.OS;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using SV.UPnPLite.Core;
@@ -19,17 +20,18 @@ namespace UPnP.Service
         private readonly ILoggerFactory _loggerFactory;
         private readonly IMemoryCache _cache;
         private readonly ILogger _logger;
+        private readonly string _localIp;
 
         private readonly ConcurrentDictionary<string, MediaServer> _mediaServers;
 
         private readonly ConcurrentDictionary<string, MediaRenderer> _rendererServers;
 
-        public UpnpManager(ILoggerFactory loggerFactory, IMemoryCache cache)
+        public UpnpManager(ILoggerFactory loggerFactory, IMemoryCache cache, IOsManager os)
         {
             _loggerFactory = loggerFactory;
             _cache = cache;
             _logger = loggerFactory.CreateLogger(nameof(UpnpManager));
-
+            _localIp = os.GetLocalIp();
             _mediaServers = new ConcurrentDictionary<string, MediaServer>();
             _rendererServers = new ConcurrentDictionary<string, MediaRenderer>();
         }
@@ -41,7 +43,7 @@ namespace UPnP.Service
         {
             _logger.LogInformation("UPNP manager is started");
 
-            var mediaServersDiscovery = new MediaServersDiscovery(_loggerFactory);
+            var mediaServersDiscovery = new MediaServersDiscovery(_loggerFactory, new[] { _localIp });
 
             mediaServersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
             {
@@ -57,7 +59,7 @@ namespace UPnP.Service
             });
 
 
-            var mediaRenderersDiscovery = new MediaRenderersDiscovery(_loggerFactory);
+            var mediaRenderersDiscovery = new MediaRenderersDiscovery(_loggerFactory, new[] { _localIp });
 
             mediaRenderersDiscovery.DevicesActivity.Where(e => e.Activity == DeviceActivity.Available).Subscribe(e =>
             {
@@ -97,6 +99,13 @@ namespace UPnP.Service
             if (!cacheFirst || !_cache.TryGetValue<IEnumerable<TMedia>>(key, out var results))
             {
                 results = await mediaServer.SearchAsync<TMedia>();
+                foreach (var item in results)
+                {
+                    foreach (var r in item.Resources)
+                    {
+                        r.Uri = r.Uri.Replace("127.0.0.1", _localIp);
+                    }
+                }
                 _cache.Set(key, results);
             }
 

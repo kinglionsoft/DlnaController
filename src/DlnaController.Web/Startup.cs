@@ -10,30 +10,46 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.HttpOverrides;
 using DlnaController.Web.Filters;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 
 namespace DlnaController.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
 
+            services.AddOsManager(Environment);
+
             services.AddUPnPManager();
 
+            services.AddCors(options =>
+                            {
+                                options.AddPolicy("AllowSpecificOrigin",
+                                    builder => builder.WithOrigins(Configuration["cors:origins"].Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                                        .AllowAnyHeader()
+                                                        .AllowAnyMethod()
+                                                        .AllowCredentials());
+                            });
+
             services.AddScoped<CustomExceptionFilterAttribute>();
-            
+
             services.AddMvc(mvc =>
                 {
-                   mvc.Filters.Add(typeof(CustomExceptionFilterAttribute));
+                    mvc.Filters.Add(typeof(CustomExceptionFilterAttribute));
+                    mvc.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
                 })
                 .AddJsonOptions(options =>
                 {
@@ -44,7 +60,7 @@ namespace DlnaController.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -52,6 +68,9 @@ namespace DlnaController.Web
             });
 
             app.UseUPnPManager();
+
+            // Shows UseCors with named policy.
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseMvc(routeBuilder =>
             {

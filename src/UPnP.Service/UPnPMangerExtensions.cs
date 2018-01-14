@@ -6,6 +6,7 @@ using AutoMapper;
 using DlnaController.Abstractions;
 using DlnaController.Domain;
 using SV.UPnPLite.Core;
+using DlnaController.OS;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -19,13 +20,16 @@ namespace Microsoft.Extensions.DependencyInjection
         
         public static IApplicationBuilder UseUPnPManager(this IApplicationBuilder app)
         {
-            CreateDtoMap();
+            var osManager = app.ApplicationServices.GetService<IOsManager>();
+
+            CreateDtoMap(osManager.GetLocalIp());
 
             app.ApplicationServices.GetService<UpnpManager>().Start();
+
             return app;
         }
 
-        private static void CreateDtoMap()
+        private static void CreateDtoMap(string localIp)
         {
             Mapper.Initialize(config =>
             {
@@ -35,7 +39,10 @@ namespace Microsoft.Extensions.DependencyInjection
                     .ForMember(d => d.Size, 
                         opt => opt.MapFrom(v => v.Resources.First().Size.ToHumanString()))
                     .ForMember(d => d.Resolution, 
-                        opt => opt.MapFrom(v => v.Resources.First().Resolution.ToString()));
+                        opt => opt.MapFrom(v => v.Resources.First().Resolution.ToString()))
+                    .ForMember(d=>d.AlbumArtUri,
+                        opt => opt.MapFrom(v=>v.AlbumArtUri.Replace("127.0.0.1", localIp)))
+                    ;
 
                 config.CreateMap<MediaRenderer, UpnpServerDto>();
                 config.CreateMap<MediaServer, UpnpServerDto>();

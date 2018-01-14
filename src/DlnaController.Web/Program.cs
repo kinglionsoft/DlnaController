@@ -15,25 +15,20 @@ namespace DlnaController.Web
     {
         public static void Main(string[] args)
         {
-            // NLog: setup the logger first to catch all errors
-            var logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
-            try
-            {
-                logger.Debug("init main");
-                BuildWebHost(args).Run();
-            }
-            catch (Exception e)
-            {
-                //NLog: catch setup errors
-                logger.Error(e, "Stopped program because of exception");
-                throw;
-            }
+            BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
            new WebHostBuilder()
             .UseKestrel()
             .UseContentRoot(Directory.GetCurrentDirectory())
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
+                var env = hostingContext.HostingEnvironment;
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+            })
             .ConfigureLogging((hostingContext, logging) =>
             {
                 if (hostingContext.HostingEnvironment.IsDevelopment())

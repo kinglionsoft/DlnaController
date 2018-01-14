@@ -79,8 +79,8 @@ namespace SV.UPnPLite.Core
         ///     <paramref name="targetDevices"/> is <c>null</c> or <see cref="string.Empty"/> -OR-
         ///     <paramref name="logManager"/> is <c>null</c>.
         /// </exception>
-        protected UPnPDevicesDiscovery(string targetDevices, ILoggerFactory loggerFactory)
-            : this(targetDevices, SSDPServer.GetInstance(loggerFactory), loggerFactory)
+        protected UPnPDevicesDiscovery(string targetDevices, ILoggerFactory loggerFactory, string[] localIps = null)
+            : this(targetDevices, SSDPServer.GetInstance(loggerFactory, localIps), loggerFactory)
         {
         }
 
